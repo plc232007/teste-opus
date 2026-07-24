@@ -312,6 +312,28 @@ section{ position:relative; z-index:2; }
 }
 .card .rule{ height:1px; background:var(--line); max-width:min(100%,52rem); }
 
+/* -- tipografia extrudada: profundidade real, nao sombra --------
+   O titulo do ato vira um solido: N camadas empilhadas em Z dentro
+   de um contexto 3D proprio. Gira com o mouse e com o scroll.
+   -------------------------------------------------------------- */
+
+.x3d{ perspective:900px; perspective-origin:32% 50%; }
+.x3d-stack{
+  display:block; position:relative;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.x3d-face{ display:block; position:relative; z-index:2; }
+.x3d-layer{
+  display:block;
+  position:absolute; left:0; top:0; right:0;
+  color:var(--void);
+  pointer-events:none;
+  user-select:none;
+}
+/* a camada mais rasa recebe o brilho ambar: a "quina" do solido */
+.x3d-layer.edge{ color:var(--burn); }
+
 .card--shot{ min-height:100svh; overflow:hidden; }
 .card--shot .card-bg{ position:absolute; inset:0; z-index:1; overflow:hidden; }
 .card--shot .card-bg img{
@@ -384,6 +406,17 @@ section{ position:relative; z-index:2; }
   .mars,.rig{ right:-30vw; top:auto; bottom:-4%; translate:0 0; width:min(80vw,440px); }
 }
 
+/* malha esferica de arame: paralelos e meridianos projetados em 3D.
+   Vive dentro de .rig, entao nasce concentrica ao planeta, e um
+   pouco maior — circunscreve Marte em vez de sumir atras dele.
+   O hemisferio de tras sai mais fraco: e o que da o volume. */
+.globe{
+  position:absolute; inset:-17%;
+  width:auto; height:auto;
+  z-index:2;
+  pointer-events:none;
+}
+
 .mars{
   will-change:transform;
   mix-blend-mode:screen;
@@ -417,13 +450,21 @@ section{ position:relative; z-index:2; }
 .rig-inner i:nth-child(2){ inset:8%;  border-color:rgba(233,229,220,.10); }
 .rig-inner i:nth-child(3){ inset:-9%; border-style:dashed; border-color:rgba(255,138,61,.13); }
 
+/* o veiculo: malha solida com sombreamento e descarte de faces
+   traseiras, desenhada sobre a trajetoria */
+.rocket{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  z-index:3;
+  pointer-events:none;
+}
+
 .traj{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:2; }
 .traj path{
   fill:none; stroke:var(--burn); stroke-width:1;
   stroke-dasharray:2 7; opacity:.55;
 }
 .traj .glow{ fill:rgba(255,138,61,.16); }
-.traj .ship{ fill:var(--ink); }
 
 .space-text{ position:relative; z-index:3; max-width:var(--measure); }
 
@@ -489,19 +530,16 @@ section{ position:relative; z-index:2; }
   position:absolute; left:0; right:0; top:52%; bottom:0;
   background:linear-gradient(180deg, rgba(11,13,20,.2), var(--void) 70%);
 }
-.lane{
-  position:absolute; left:50%; top:52%; bottom:-2%;
-  width:min(56vw,760px); translate:-50% 0;
-  clip-path:polygon(49.4% 0, 50.6% 0, 100% 100%, 0 100%);
-  background-image:repeating-linear-gradient(180deg,
-      rgba(233,229,220,.55) 0 4%, rgba(233,229,220,0) 4% 10%);
-  background-size:100% 220px;
-  animation:lane 2600ms linear infinite;
-  opacity:.5;
-  -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 22%, #000 100%);
-          mask-image:linear-gradient(180deg, transparent 0%, #000 22%, #000 100%);
+/* estrada em perspectiva de verdade: um plano no espaco 3D,
+   projetado a cada quadro. O ponto de fuga nao e desenhado —
+   ele resulta da projecao. */
+.roadgrid{
+  position:absolute; left:0; right:0; top:0; bottom:0;
+  z-index:1;
+  pointer-events:none;
+  -webkit-mask-image:linear-gradient(180deg, transparent 48%, #000 58%, #000 100%);
+          mask-image:linear-gradient(180deg, transparent 48%, #000 58%, #000 100%);
 }
-@keyframes lane{ from{ background-position-y:0 } to{ background-position-y:220px } }
 
 .road-copy{ position:relative; z-index:3; max-width:var(--measure); }
 .road-copy .tele{ margin-bottom:1.4rem; }
@@ -638,7 +676,10 @@ section{ position:relative; z-index:2; }
   border-top:1px solid var(--line);
   border-bottom:1px solid var(--line);
   margin-top:clamp(2rem,6vh,4rem);
+  perspective:1600px;
+  perspective-origin:50% 50%;
 }
+.fronts-inner{ display:contents; }
 @media (min-width:720px){ .fronts{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
 
 .front{
@@ -649,7 +690,11 @@ section{ position:relative; z-index:2; }
   display:flex; flex-direction:column; gap:1.2rem;
   min-height:clamp(320px,42vh,440px);
 }
-.front:hover{ background:var(--deep); }
+.front:hover{
+  background:var(--deep);
+  transform:translateZ(46px);
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.9);
+}
 .front .ix{ font-family:var(--tele); font-size:.62rem; letter-spacing:.3em; color:var(--burn); }
 .front h3{
   font-family:var(--display); font-weight:900;
@@ -790,6 +835,8 @@ footer{
   .entry .dot{ background:var(--burn); border-color:var(--burn); }
   .entry .yr{ color:var(--burn); }
   .mars{ will-change:auto; }
+  .x3d-layer{ display:none; }        /* sem extrusao: so a face legivel */
+  .front:hover{ transform:none; box-shadow:none; }
 
   /* a sequencia vira uma prancha de contato estatica */
   .poses{ height:auto; }
@@ -852,7 +899,7 @@ footer{
 <!-- == ATO I ================================================= -->
 <section class="card solid" id="ato-1">
   <p class="num mask">Ato I</p>
-  <h2 class="display mask" style="--delay:120ms">Origem</h2>
+  <h2 class="display mask x3d" style="--delay:120ms"><span class="x3d-stack"><span class="x3d-face">Origem</span></span></h2>
   <div class="rule draw" style="--delay:280ms"></div>
 </section>
 
@@ -926,7 +973,7 @@ footer{
          decoding="async" alt="" data-kb="0.08">
   </div>
   <p class="num mask">Ato II</p>
-  <h2 class="display mask" style="--delay:120ms">O foguete</h2>
+  <h2 class="display mask x3d" style="--delay:120ms"><span class="x3d-stack"><span class="x3d-face">O foguete</span></span></h2>
   <div class="rule draw" style="--delay:280ms"></div>
   <p class="tele rise" style="--delay:420ms">
     Exposição longa de um lançamento noturno · <b>NASA</b>
@@ -941,6 +988,7 @@ footer{
         <i style="--rx:70deg;--ry:58deg"></i>
         <i style="--rx:22deg;--ry:-34deg"></i>
       </div>
+      <canvas class="globe" id="globe"></canvas>
     </div>
 
     <div class="mars" id="mars" aria-hidden="true">
@@ -949,9 +997,10 @@ footer{
 
     <svg class="traj" id="traj" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       <path id="trajPath" d="M -40 600 C 220 560, 300 300, 520 232 S 800 190, 1010 92"/>
-      <circle id="shipGlow" class="glow" cx="-40" cy="600" r="13"/>
-      <circle id="ship" class="ship" cx="-40" cy="600" r="3.4"/>
+      <circle id="shipGlow" class="glow" cx="-40" cy="600" r="18"/>
     </svg>
+
+    <canvas class="rocket" id="rocket" aria-hidden="true"></canvas>
   </div>
 
   <div class="space-text prose">
@@ -1019,15 +1068,15 @@ footer{
 <!-- == ATO III =============================================== -->
 <section class="card solid" id="ato-3">
   <p class="num mask">Ato III</p>
-  <h2 class="display mask" style="--delay:120ms">A estrada</h2>
+  <h2 class="display mask x3d" style="--delay:120ms"><span class="x3d-stack"><span class="x3d-face">A estrada</span></span></h2>
   <div class="rule draw" style="--delay:280ms"></div>
 </section>
 
 <section class="road" id="tesla">
   <div class="sun" aria-hidden="true"></div>
   <div class="asphalt" aria-hidden="true"></div>
+  <canvas class="roadgrid" id="roadgrid" aria-hidden="true"></canvas>
   <div class="horizon" aria-hidden="true"></div>
-  <div class="lane" aria-hidden="true"></div>
 
   <div class="road-copy prose">
     <p class="tele eyebrow rise">Tesla · investidor em 2004, CEO em 2008</p>
@@ -1121,7 +1170,7 @@ footer{
 <!-- == ATO IV ================================================ -->
 <section class="card solid" id="ato-4">
   <p class="num mask">Ato IV</p>
-  <h2 class="display mask" style="--delay:120ms">Frentes paralelas</h2>
+  <h2 class="display mask x3d" style="--delay:120ms"><span class="x3d-stack"><span class="x3d-face">Frentes paralelas</span></span></h2>
   <div class="rule draw" style="--delay:280ms"></div>
 </section>
 
@@ -1176,7 +1225,7 @@ footer{
 <!-- == ATO V ================================================= -->
 <section class="card solid" id="ato-5">
   <p class="num mask">Ato V</p>
-  <h2 class="display mask" style="--delay:120ms">Registro de bordo</h2>
+  <h2 class="display mask x3d" style="--delay:120ms"><span class="x3d-stack"><span class="x3d-face">Registro de bordo</span></span></h2>
   <div class="rule draw" style="--delay:280ms"></div>
 </section>
 
@@ -1382,7 +1431,10 @@ footer{
 
   window.addEventListener('resize', function(){
     sizeCanvas();
-    if (reduced) drawStars(0, 0);
+    if (reduced){
+      drawStars(0, 0);
+      if (typeof drawGlobe === 'function'){ drawGlobe(0, 0.5); drawRoad(0); }
+    }
   }, { passive: true });
 
   if (!reduced){
@@ -1405,7 +1457,6 @@ footer{
   var rigInner = document.getElementById('rigInner');
   var spacex   = document.getElementById('spacex');
   var path     = document.getElementById('trajPath');
-  var ship     = document.getElementById('ship');
   var shipGlow = document.getElementById('shipGlow');
   var pathLen  = path.getTotalLength();
 
@@ -1455,8 +1506,6 @@ footer{
       'deg) rotateZ(' + (p * 14 - 7).toFixed(2) + 'deg)';
 
     var pt = path.getPointAtLength(p * pathLen);
-    ship.setAttribute('cx', pt.x);
-    ship.setAttribute('cy', pt.y);
     shipGlow.setAttribute('cx', pt.x);
     shipGlow.setAttribute('cy', pt.y);
   }
@@ -1513,6 +1562,415 @@ footer{
     }
   }
 
+  /* ============================================================
+     3b. TIPOGRAFIA EXTRUDADA
+     Cada titulo de ato vira um solido: camadas empilhadas em Z
+     dentro de um contexto preserve-3d. A face de cima continua
+     sendo o unico texto lido por leitor de tela.
+     ============================================================ */
+
+  var LAYERS = 15;
+  var stacks = [];
+
+  Array.prototype.forEach.call(document.querySelectorAll('.x3d-stack'), function(stack){
+    var face = stack.querySelector('.x3d-face');
+    if (!face) return;
+    var text = face.textContent;
+
+    for (var i = LAYERS; i >= 1; i--){
+      var layer = document.createElement('span');
+      layer.className = 'x3d-layer' + (i === 1 ? ' edge' : '');
+      layer.textContent = text;
+      layer.setAttribute('aria-hidden', 'true');
+      layer.style.transform = 'translateZ(' + (-i * 2.3).toFixed(1) + 'px)';
+
+      var k = i / LAYERS;                       // 0 = colado na face
+      layer.style.color = (i === 1)
+        ? 'rgba(255,138,61,.5)'                 // a quina pega a luz ambar
+        : 'rgba(61,74,99,' + (0.44 * (1 - k) + 0.05).toFixed(3) + ')';
+
+      stack.insertBefore(layer, face);
+    }
+    stacks.push(stack);
+  });
+
+  function updateType(){
+    for (var i = 0; i < stacks.length; i++){
+      var r = stacks[i].getBoundingClientRect();
+      if (r.bottom < -80 || r.top > window.innerHeight + 80) continue;
+      var p = progress(r);
+      stacks[i].style.transform =
+        'rotateY(' + (mouse.x * 7 + (p - 0.5) * 11).toFixed(2) + 'deg) rotateX(' +
+        (mouse.y * -4.5 + (0.5 - p) * 4).toFixed(2) + 'deg)';
+    }
+  }
+
+  /* ============================================================
+     3c. MALHA ESFERICA DE ARAME
+     Paralelos e meridianos de uma esfera unitaria, girados em
+     dois eixos e projetados. O hemisferio de tras sai mais fraco:
+     e o que da a leitura de volume.
+     ============================================================ */
+
+  var globeEl = document.getElementById('globe');
+  var gctx = globeEl.getContext('2d');
+  var GS = 0;                                   // lado do canvas, em CSS px
+
+  function sizeGlobe(){
+    var r = globeEl.getBoundingClientRect();
+    if (!r.width) return false;
+    GS = r.width;
+    globeEl.width  = Math.round(GS * DPR);
+    globeEl.height = Math.round(GS * DPR);
+    gctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    return true;
+  }
+
+  function drawGlobe(t, p){
+    if (!GS && !sizeGlobe()) return;
+    var r = globeEl.getBoundingClientRect();
+    if (Math.abs(r.width - GS) > 1) sizeGlobe();
+
+    gctx.clearRect(0, 0, GS, GS);
+
+    var R = GS * 0.455, c = GS / 2;
+    var tilt = -0.44;                           // eixo inclinado, fixo
+    var spin = t * 0.00011 + p * 1.7;           // gira no tempo e no scroll
+    var ct = Math.cos(tilt), st = Math.sin(tilt);
+    var cs = Math.cos(spin), ss = Math.sin(spin);
+
+    // ponto da esfera -> tela, guardando z para saber o hemisferio
+    function pt(laDeg, loDeg, out){
+      var la = laDeg * 0.0174533, lo = loDeg * 0.0174533;
+      var cl = Math.cos(la);
+      var x = cl * Math.cos(lo), y = Math.sin(la), z = cl * Math.sin(lo);
+      var x1 = x * cs - z * ss, z1 = x * ss + z * cs;   // giro em Y
+      var y1 = y * ct - z1 * st, z2 = y * st + z1 * ct; // inclinacao em X
+      out.x = c + x1 * R; out.y = c - y1 * R; out.z = z2;
+    }
+
+    var q = { x:0, y:0, z:0 };
+
+    // desenha um anel em dois passes: fundo fraco, frente forte
+    function ring(fixed, isParallel, front){
+      gctx.beginPath();
+      var open = false;
+      for (var i = 0; i <= 48; i++){
+        var a = i * 7.5;
+        if (isParallel) pt(fixed, a, q); else pt(a - 90, fixed, q);
+        if ((q.z >= 0) === front){
+          if (open) gctx.lineTo(q.x, q.y);
+          else { gctx.moveTo(q.x, q.y); open = true; }
+        } else open = false;
+      }
+      gctx.stroke();
+    }
+
+    for (var pass = 0; pass < 2; pass++){
+      var front = pass === 1;
+      gctx.lineWidth = front ? 1 : 0.8;
+      gctx.strokeStyle = front ? 'rgba(255,138,61,.30)' : 'rgba(61,74,99,.30)';
+      for (var lat = -75; lat <= 75; lat += 15) ring(lat, true, front);
+      gctx.strokeStyle = front ? 'rgba(233,229,220,.13)' : 'rgba(61,74,99,.16)';
+      for (var lon = 0; lon < 180; lon += 15) ring(lon, false, front);
+    }
+
+    // eixo de rotacao, atravessando os polos
+    gctx.beginPath();
+    pt(90, 0, q);  gctx.moveTo(q.x, q.y);
+    pt(-90, 0, q); gctx.lineTo(q.x, q.y);
+    gctx.strokeStyle = 'rgba(255,138,61,.22)';
+    gctx.stroke();
+  }
+
+  /* ============================================================
+     3d. PLANO DA ESTRADA EM PERSPECTIVA
+     Um plano no espaco 3D, projetado quadro a quadro. O ponto de
+     fuga nao e desenhado: ele cai onde a projecao manda.
+     ============================================================ */
+
+  var roadEl = document.getElementById('roadgrid');
+  var rctx = roadEl.getContext('2d');
+  var RW = 0, RH = 0;
+
+  function sizeRoad(){
+    var r = roadEl.getBoundingClientRect();
+    if (!r.width || !r.height) return false;
+    RW = r.width; RH = r.height;
+    roadEl.width  = Math.round(RW * DPR);
+    roadEl.height = Math.round(RH * DPR);
+    rctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    return true;
+  }
+
+  var Z_NEAR = 0.9, Z_FAR = 26, CAM_Y = 0.35;
+
+  function drawRoad(t){
+    if (!RW && !sizeRoad()) return;
+    var rect = roadEl.getBoundingClientRect();
+    if (Math.abs(rect.width - RW) > 1 || Math.abs(rect.height - RH) > 1) sizeRoad();
+
+    rctx.clearRect(0, 0, RW, RH);
+
+    var f = RH * 1.05;                 // distancia focal
+    var cx = RW / 2, cy = RH * 0.52;   // o horizonte da projecao coincide com .horizon
+    var travel = (t * 0.00075) % 1;    // o plano corre em direcao a camera
+
+    function px(x, z){ return cx + (x / z) * f; }
+    function py(z){    return cy + (CAM_Y / z) * f; }
+
+    // longitudinais: retas no espaco, retas na tela — bastam dois pontos
+    for (var i = -8; i <= 8; i++){
+      if (i === 0) continue;
+      var x = i * 0.45;
+      var fade = 1 - Math.min(Math.abs(i) / 9, 1);
+      rctx.beginPath();
+      rctx.moveTo(px(x, Z_NEAR), py(Z_NEAR));
+      rctx.lineTo(px(x, Z_FAR),  py(Z_FAR));
+      rctx.strokeStyle = 'rgba(61,74,99,' + (0.30 * fade + 0.04).toFixed(3) + ')';
+      rctx.lineWidth = 1;
+      rctx.stroke();
+    }
+
+    // travessas: aproximam-se da camera e somem no horizonte
+    for (var k = 0; k < 30; k++){
+      var z = Z_NEAR + k - travel;
+      if (z < Z_NEAR || z > Z_FAR) continue;
+      var a = Math.pow(1 - (z - Z_NEAR) / (Z_FAR - Z_NEAR), 1.7);
+      rctx.beginPath();
+      rctx.moveTo(px(-3.6, z), py(z));
+      rctx.lineTo(px( 3.6, z), py(z));
+      rctx.strokeStyle = 'rgba(233,229,220,' + (0.22 * a).toFixed(3) + ')';
+      rctx.stroke();
+    }
+
+    // eixo central, em ambar, com a mesma cadencia
+    for (var m = 0; m < 30; m++){
+      var z0 = Z_NEAR + m - travel;
+      var z1 = z0 + 0.45;
+      if (z1 < Z_NEAR || z0 > Z_FAR) continue;
+      if (z0 < Z_NEAR) z0 = Z_NEAR;
+      var af = Math.pow(1 - (z0 - Z_NEAR) / (Z_FAR - Z_NEAR), 1.5);
+      rctx.beginPath();
+      rctx.moveTo(px(0, z0), py(z0));
+      rctx.lineTo(px(0, z1), py(z1));
+      rctx.strokeStyle = 'rgba(255,138,61,' + (0.55 * af).toFixed(3) + ')';
+      rctx.lineWidth = 1.6;
+      rctx.stroke();
+    }
+  }
+
+  /* ============================================================
+     3e. O VEICULO
+     Malha solida de revolucao, montada uma vez. A cada quadro:
+     gira em torno do proprio eixo, aponta para a tangente da
+     trajetoria, descarta as faces de tras e sombreia as que
+     sobram pelo angulo com a luz. Painter's algorithm no fim.
+     ============================================================ */
+
+  var rocketEl = document.getElementById('rocket');
+  var kctx = rocketEl.getContext('2d');
+  var KW = 0, KH = 0;
+
+  function sizeRocket(){
+    var r = rocketEl.getBoundingClientRect();
+    if (!r.width || !r.height) return false;
+    KW = r.width; KH = r.height;
+    rocketEl.width  = Math.round(KW * DPR);
+    rocketEl.height = Math.round(KH * DPR);
+    kctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    return true;
+  }
+
+  // perfil de revolucao: [altura, raio]. Primeiro estagio + coifa.
+  var PROFILE = [
+    [-1.30, 0.000], [-1.27, 0.150], [-1.20, 0.175], [-0.60, 0.180],
+    [ 0.40, 0.180], [ 0.72, 0.180], [ 0.96, 0.150], [ 1.14, 0.098],
+    [ 1.30, 0.000]
+  ];
+  var SEG = 18;
+  var MESH = [];          // {v:[4 vertices], kind}
+
+  (function buildRocket(){
+    var i, j, ring = [];
+
+    for (i = 0; i < PROFILE.length; i++){
+      var y = PROFILE[i][0], rad = PROFILE[i][1], row = [];
+      for (j = 0; j < SEG; j++){
+        var a = (j / SEG) * Math.PI * 2;
+        row.push([Math.cos(a) * rad, y, Math.sin(a) * rad]);
+      }
+      ring.push(row);
+    }
+
+    for (i = 0; i < ring.length - 1; i++){
+      for (j = 0; j < SEG; j++){
+        var k = (j + 1) % SEG;
+        MESH.push({
+          v: [ring[i][j], ring[i][k], ring[i + 1][k], ring[i + 1][j]],
+          kind: (i >= PROFILE.length - 3) ? 'nose' : 'body'
+        });
+      }
+    }
+
+    // quatro aletas-grade, no alto do estagio
+    for (i = 0; i < 4; i++){
+      var an = i * Math.PI / 2 + Math.PI / 4;
+      var cx = Math.cos(an), cz = Math.sin(an);
+      MESH.push({
+        v: [
+          [cx * 0.17, 0.60, cz * 0.17], [cx * 0.40, 0.66, cz * 0.40],
+          [cx * 0.40, 0.40, cz * 0.40], [cx * 0.17, 0.34, cz * 0.17]
+        ],
+        kind: 'fin'
+      });
+    }
+
+    // quatro pernas de pouso, recolhidas contra o corpo
+    for (i = 0; i < 4; i++){
+      var ab = i * Math.PI / 2;
+      var bx = Math.cos(ab), bz = Math.sin(ab);
+      MESH.push({
+        v: [
+          [bx * 0.16, -0.62, bz * 0.16], [bx * 0.26, -0.66, bz * 0.26],
+          [bx * 0.34, -1.30, bz * 0.34], [bx * 0.19, -1.30, bz * 0.19]
+        ],
+        kind: 'leg'
+      });
+    }
+  })();
+
+  var TONE = {
+    body: [176, 172, 163],
+    nose: [206, 202, 192],
+    fin:  [116, 118, 124],
+    leg:  [96, 100, 110]
+  };
+  // luz vinda de cima, a esquerda e a frente
+  var LX = -0.46, LY = 0.72, LZ = 0.52;
+
+  function drawRocket(t, p){
+    if (!KW && !sizeRocket()) return;
+    var box = rocketEl.getBoundingClientRect();
+    if (Math.abs(box.width - KW) > 1 || Math.abs(box.height - KH) > 1) sizeRocket();
+
+    kctx.clearRect(0, 0, KW, KH);
+    if (p <= 0.001) return;
+
+    // posicao e tangente sobre a mesma curva do SVG
+    var L = pathLen;
+    var a1 = path.getPointAtLength(Math.max(p * L - 3, 0));
+    var a2 = path.getPointAtLength(Math.min(p * L + 3, L));
+    var here = path.getPointAtLength(p * L);
+
+    // viewBox 1000x620 com preserveAspectRatio="xMidYMid meet"
+    var s = Math.min(KW / 1000, KH / 620);
+    var ox = (KW - 1000 * s) / 2, oy = (KH - 620 * s) / 2;
+    var cx = ox + here.x * s, cy = oy + here.y * s;
+
+    var dx = a2.x - a1.x, dy = a2.y - a1.y;
+    var rotZ = Math.atan2(-dx, -dy);          // eixo local +Y sobre a tangente
+    var spin = t * 0.00035 + p * 3.0;         // giro em torno do proprio eixo
+    var tilt = 0.34;                          // inclinacao para revelar volume
+
+    var cS = Math.cos(spin), sS = Math.sin(spin);
+    var cT = Math.cos(tilt), sT = Math.sin(tilt);
+    var cZ = Math.cos(rotZ), sZ = Math.sin(rotZ);
+
+    var scale = Math.max(46, Math.min(KH * 0.15, 88));   // ~120 a 230px de altura
+    var FOC = 7.5;                            // perspectiva fraca, sem distorcer
+
+    function xf(v){
+      // giro no proprio eixo (Y)
+      var x = v[0] * cS - v[2] * sS;
+      var z = v[0] * sS + v[2] * cS;
+      var y = v[1];
+      // inclinacao (X)
+      var y2 = y * cT - z * sT;
+      var z2 = y * sT + z * cT;
+      // alinhamento com a tangente (Z)
+      var x3 = x * cZ - y2 * sZ;
+      var y3 = x * sZ + y2 * cZ;
+      return { x: x3, y: y3, z: z2 };
+    }
+
+    var faces = [], n;
+
+    for (n = 0; n < MESH.length; n++){
+      var f = MESH[n];
+      var A = xf(f.v[0]), B = xf(f.v[1]), C = xf(f.v[2]), D = xf(f.v[3]);
+
+      // normal pelo produto vetorial de duas arestas
+      var ux = B.x - A.x, uy = B.y - A.y, uz = B.z - A.z;
+      var wx = D.x - A.x, wy = D.y - A.y, wz = D.z - A.z;
+      var nx = uy * wz - uz * wy;
+      var ny = uz * wx - ux * wz;
+      var nz = ux * wy - uy * wx;
+      var len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+      nx /= len; ny /= len; nz /= len;
+
+      var twoSided = (f.kind === 'fin' || f.kind === 'leg');
+      if (!twoSided && nz <= 0) continue;                 // descarte de face traseira
+      if (twoSided && nz < 0){ nx = -nx; ny = -ny; nz = -nz; }
+
+      var lam = nx * LX + ny * LY + nz * LZ;
+      var lit = 0.16 + 0.84 * (lam > 0 ? lam : 0);
+      var base = TONE[f.kind];
+
+      faces.push({
+        pts: [A, B, C, D],
+        depth: (A.z + B.z + C.z + D.z) / 4,
+        fill: 'rgb(' + ((base[0] * lit) | 0) + ',' + ((base[1] * lit) | 0) + ',' + ((base[2] * lit) | 0) + ')'
+      });
+    }
+
+    faces.sort(function(a, b){ return a.depth - b.depth; });   // longe primeiro
+
+    function px(v){ var w = FOC / (FOC + v.z); return cx + v.x * w * scale; }
+    function py(v){ var w = FOC / (FOC + v.z); return cy - v.y * w * scale; }
+
+    // pluma: sai da base, no sentido oposto ao da tangente
+    var baseV = xf([0, -1.30, 0]);
+    var bx = px(baseV), by = py(baseV);
+    var plume = kctx.createRadialGradient(bx, by, 0, bx, by, scale * 1.15);
+    plume.addColorStop(0,   'rgba(255,214,170,.85)');
+    plume.addColorStop(0.18,'rgba(255,138,61,.42)');
+    plume.addColorStop(1,   'rgba(255,138,61,0)');
+    kctx.fillStyle = plume;
+    kctx.beginPath();
+    kctx.arc(bx, by, scale * 1.15, 0, 6.2832);
+    kctx.fill();
+
+    for (n = 0; n < faces.length; n++){
+      var q = faces[n].pts;
+      kctx.beginPath();
+      kctx.moveTo(px(q[0]), py(q[0]));
+      kctx.lineTo(px(q[1]), py(q[1]));
+      kctx.lineTo(px(q[2]), py(q[2]));
+      kctx.lineTo(px(q[3]), py(q[3]));
+      kctx.closePath();
+      kctx.fillStyle = faces[n].fill;
+      // contorno na mesma cor: fecha as fissuras do antialias entre faces
+      kctx.strokeStyle = faces[n].fill;
+      kctx.lineWidth = 1;
+      kctx.fill();
+      kctx.stroke();
+    }
+  }
+
+  var tesla = document.getElementById('tesla');
+
+  function updateVolumes(t){
+    var g = globeEl.getBoundingClientRect();
+    if (g.bottom > -120 && g.top < window.innerHeight + 120){
+      var p = progress(spacex.getBoundingClientRect());
+      drawGlobe(t, p);
+      drawRocket(t, p);
+    }
+    var r = tesla.getBoundingClientRect();
+    if (r.bottom > -120 && r.top < window.innerHeight + 120) drawRoad(t);
+  }
+
   function updateRail(){
     var max = document.documentElement.scrollHeight - window.innerHeight;
     var g = max > 0 ? window.scrollY / max : 0;
@@ -1526,6 +1984,9 @@ footer{
   if (reduced){
     drawStars(0, 0);
     updateScene();
+    drawGlobe(0, 0.5);
+    drawRocket(0, 0.5);
+    drawRoad(0);
     updateRail();
   } else {
     requestAnimationFrame(function frame(t){
@@ -1534,7 +1995,9 @@ footer{
       drawStars(t, window.scrollY);
       updateShots();
       updateHero();
+      updateType();
       updateScene();
+      updateVolumes(t);
       updatePoses();
       updateRail();
       requestAnimationFrame(frame);
