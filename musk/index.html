@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MUSK — Perfil documental em cinco atos</title>
+<meta name="description" content="Perfil documental de Elon Musk em cinco atos. Fatos públicos, sem afiliação.">
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="img/earth-limb.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;0,6..96,900;1,6..96,700&family=Archivo:wght@300;400&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ==============================================================
+   MUSK - perfil documental - cinco atos
+   Fotografia: NASA (dominio publico) + CC BY 2.0 creditada.
+   ============================================================== */
+
+:root{
+  --void:  #06070b;
+  --deep:  #0b0d14;
+  --ink:   #e9e5dc;
+  --dim:   #8b8878;
+  --burn:  #ff8a3d;
+  --mars:  #c1543a;
+  --steel: #3d4a63;
+
+  --line:      rgba(61,74,99,.55);
+  --line-soft: rgba(61,74,99,.28);
+
+  --display: "Bodoni Moda", "Didot", Georgia, serif;
+  --body:    "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --tele:    "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+
+  --exp: cubic-bezier(.16,1,.3,1);
+  --pad: clamp(1.25rem, 5vw, 6rem);
+  --measure: 38rem;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+
+html{ background:var(--void); -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--body);
+  font-weight:300;
+  font-size:clamp(1rem,.68rem + .42vw,1.125rem);
+  line-height:1.68;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+::selection{ background:var(--burn); color:var(--void); }
+:focus-visible{ outline:2px solid var(--burn); outline-offset:4px; }
+
+h1,h2,h3,h4,p,figure,blockquote{ margin:0; }
+h1,h2,h3,h4{ font-weight:400; }
+img,svg,canvas{ display:block; }
+a{ color:inherit; text-decoration:none; }
+
+/* -- textura: grao + vinheta ----------------------------------- */
+
+.grain,.vignette{ position:fixed; pointer-events:none; }
+
+.grain{
+  inset:-120%;
+  z-index:9999;
+  background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.06'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation:grain-shift 900ms steps(1) infinite;
+  will-change:transform;
+}
+@keyframes grain-shift{
+  0%{transform:translate3d(0,0,0)}      20%{transform:translate3d(-4%,3%,0)}
+  40%{transform:translate3d(3%,-4%,0)}  60%{transform:translate3d(-3%,-2%,0)}
+  80%{transform:translate3d(4%,2%,0)}   100%{transform:translate3d(0,0,0)}
+}
+
+.vignette{
+  inset:0; z-index:9998;
+  background:radial-gradient(120% 82% at 50% 48%, transparent 38%, rgba(0,0,0,.30) 72%, rgba(0,0,0,.55) 100%);
+}
+
+/* -- starfield 3D ---------------------------------------------- */
+
+#stars{ position:fixed; inset:0; width:100%; height:100%; z-index:0; }
+
+/* ==============================================================
+   SISTEMA DE TOMADAS
+   Toda foto perde a borda: mascara de esfumado nas quatro bordas.
+   ============================================================== */
+
+.shot{ position:relative; overflow:hidden; background:var(--void); }
+.shot img{ width:100%; height:100%; object-fit:cover; transform-origin:50% 50%; }
+
+.shot--film img{ filter:contrast(1.08) saturate(.9) brightness(.92); }
+
+.shot--duo img{ filter:grayscale(1) contrast(1.34) brightness(.62); }
+.shot--duo::before{
+  content:""; position:absolute; inset:0; z-index:2;
+  background:var(--burn); mix-blend-mode:color; opacity:.55;
+}
+
+.shot::after{
+  content:""; position:absolute; inset:0; z-index:3;
+  background:radial-gradient(100% 78% at 50% 45%, transparent 34%, rgba(6,7,11,.62) 100%);
+  pointer-events:none;
+}
+
+/* letterbox 2.39:1, com moldura assumida (hairline) em vez de corte seco */
+.shot--scope{ aspect-ratio:2.39/1; box-shadow:inset 0 0 0 1px var(--line-soft); }
+.shot--scope img{ object-position:50% 30%; }
+
+.shot--reveal{ clip-path:inset(0 0 100% 0); transition:clip-path 1500ms var(--exp); }
+.shot--reveal.on{ clip-path:inset(0 0 0 0); }
+
+figcaption{
+  margin-top:.9rem;
+  font-family:var(--tele); font-weight:300;
+  font-size:.58rem; letter-spacing:.26em; text-transform:uppercase;
+  color:var(--dim);
+  display:flex; flex-wrap:wrap; gap:.4rem 1.2rem;
+}
+figcaption b{ color:var(--burn); font-weight:400; }
+
+/* -- HUD fixo -------------------------------------------------- */
+
+.hud{
+  position:fixed; top:0; left:0; right:0; z-index:60;
+  padding:clamp(1rem,2.2vw,1.9rem) var(--pad);
+  display:flex; justify-content:space-between; gap:1rem;
+  font-family:var(--tele); font-weight:300; font-size:.62rem;
+  letter-spacing:.3em; text-transform:uppercase;
+  color:var(--dim); mix-blend-mode:difference;
+}
+.hud .id{ color:var(--ink); }
+@media (max-width:560px){ .hud .sys{ display:none; } }
+
+.rail{
+  position:fixed; z-index:60;
+  left:var(--pad); bottom:clamp(1rem,2.4vw,2rem);
+  font-family:var(--tele); font-size:.6rem; letter-spacing:.3em;
+  color:var(--dim);
+  display:flex; align-items:center; gap:.75rem;
+  mix-blend-mode:difference;
+}
+.rail .track{
+  width:clamp(60px,14vw,160px); height:1px; background:var(--line);
+  position:relative; overflow:hidden;
+}
+.rail .track i{
+  position:absolute; inset:0; background:var(--burn);
+  transform:scaleX(0); transform-origin:0 50%;
+}
+@media (max-width:560px){ .rail{ display:none; } }
+
+/* -- tipografia ------------------------------------------------ */
+
+.tele{
+  font-family:var(--tele); font-weight:300;
+  font-size:clamp(.6rem,.55rem + .1vw,.7rem);
+  letter-spacing:.3em; text-transform:uppercase; color:var(--dim);
+}
+.tele b{ color:var(--burn); font-weight:400; }
+
+.eyebrow{ display:flex; align-items:center; gap:1rem; }
+.eyebrow::before{
+  content:""; width:clamp(28px,4vw,64px); height:1px;
+  background:var(--burn); flex:none;
+}
+
+.display{ font-family:var(--display); font-weight:900; line-height:.9; letter-spacing:-.02em; }
+
+.prose{ max-width:var(--measure); }
+.prose p + p{ margin-top:1.5em; }
+.prose p{ color:var(--dim); }
+.prose p.lead{
+  color:var(--ink);
+  font-size:clamp(1.15rem,.9rem + .8vw,1.5rem);
+  line-height:1.45; font-weight:300; letter-spacing:-.01em;
+}
+.prose strong{ color:var(--ink); font-weight:400; }
+
+section{ position:relative; z-index:2; }
+.solid{ background:var(--void); }
+
+/* -- primitivas de revelacao ----------------------------------- */
+
+.mask{
+  clip-path:inset(0 0 100% 0);
+  transition:clip-path 1200ms var(--exp);
+  transition-delay:var(--delay,0ms);
+}
+.mask.on{ clip-path:inset(0 0 0 0); }
+
+.rise{
+  opacity:0; transform:translateY(36px);
+  transition:opacity 900ms var(--exp), transform 900ms var(--exp);
+  transition-delay:var(--delay,0ms);
+}
+.rise.on{ opacity:1; transform:none; }
+
+.draw{
+  transform:scaleX(0); transform-origin:0 50%;
+  transition:transform 1200ms var(--exp);
+  transition-delay:var(--delay,0ms);
+}
+.draw.on{ transform:scaleX(1); }
+
+/* == ABERTURA ================================================== */
+
+.open{
+  position:relative;
+  min-height:100svh;
+  padding:0 var(--pad);
+  display:grid;
+  grid-template-rows:1fr auto 1fr;
+  align-content:center;
+  perspective:1100px;               /* profundidade real do bloco de abertura */
+  perspective-origin:50% 45%;
+}
+
+.open-shot{
+  position:absolute; inset:0; z-index:1;
+  overflow:hidden;
+  /* esfuma topo E base: nenhuma aresta da foto encontra a secao */
+  -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 42%, #000 88%, transparent 100%);
+          mask-image:linear-gradient(180deg, transparent 0%, #000 42%, #000 88%, transparent 100%);
+}
+.open-shot img{
+  position:absolute; left:0; top:0;
+  width:100%; height:112%;          /* empurra a barra de ID para fora */
+  object-fit:cover;
+  object-position:50% 38%;
+  filter:contrast(1.08) saturate(.88) brightness(.9);
+}
+.open-shot::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 45%, rgba(6,7,11,.55) 88%, var(--void) 100%);
+}
+
+.open > *:not(.open-shot){ position:relative; z-index:3; }
+
+.open-top{ align-self:end; padding-bottom:clamp(1.5rem,4vh,3rem); }
+
+.open h1{
+  font-size:clamp(5rem,24vw,22rem);
+  line-height:.9; letter-spacing:-.045em;
+  margin-left:-.025em;
+  text-shadow:0 0 90px rgba(6,7,11,.85);
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+
+.open-bottom{
+  align-self:start;
+  padding-top:clamp(1.5rem,4vh,3rem);
+  display:grid; gap:clamp(1.6rem,4vh,2.6rem);
+}
+@media (min-width:860px){
+  .open-bottom{
+    grid-template-columns:1fr minmax(0,32rem);
+    align-items:start; gap:clamp(2rem,6vw,6rem);
+  }
+}
+
+.open-sub{
+  font-size:clamp(1.05rem,.85rem + .6vw,1.35rem);
+  line-height:1.45; color:var(--ink);
+  font-weight:300; letter-spacing:-.01em; max-width:34rem;
+}
+.open-sub em{ font-style:normal; color:var(--burn); }
+
+.cue{
+  display:flex; align-items:center; gap:.9rem;
+  font-family:var(--tele); font-size:.6rem; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--dim);
+}
+.cue .bar{
+  width:1px; height:56px;
+  background:linear-gradient(var(--burn), rgba(255,138,61,0));
+  transform-origin:50% 0;
+  animation:cue 2800ms cubic-bezier(.16,1,.3,1) infinite;
+}
+@keyframes cue{
+  0%,100%{ transform:scaleY(.28); opacity:.35 }
+  45%    { transform:scaleY(1);   opacity:1 }
+}
+
+/* == CARTAO DE TITULO DE ATO =================================== */
+
+.card{
+  position:relative;
+  min-height:82svh;
+  padding:clamp(6rem,16vh,12rem) var(--pad);
+  display:flex; flex-direction:column; justify-content:center;
+  gap:clamp(1.5rem,4vh,2.4rem);
+}
+.card > *{ position:relative; z-index:3; }
+.card .num{
+  font-family:var(--display); font-weight:700; font-style:italic;
+  font-size:clamp(1.4rem,1rem + 1.2vw,2.2rem);
+  color:var(--burn); letter-spacing:.02em;
+}
+.card h2{
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(2.8rem,8vw,7rem);
+  line-height:.94; letter-spacing:-.03em; max-width:14ch;
+}
+.card .rule{ height:1px; background:var(--line); max-width:min(100%,52rem); }
+
+.card--shot{ min-height:100svh; overflow:hidden; }
+.card--shot .card-bg{ position:absolute; inset:0; z-index:1; overflow:hidden; }
+.card--shot .card-bg img{
+  width:100%; height:100%;
+  object-fit:cover; object-position:62% 50%;
+  filter:contrast(1.1) saturate(.86) brightness(.9);
+}
+/* dissolve a foto no --void pelos quatro lados: sem aresta visivel */
+.card--shot .card-bg::after{
+  content:""; position:absolute; inset:0;
+  background:
+    linear-gradient(90deg, var(--void) 0%, rgba(6,7,11,.72) 34%, rgba(6,7,11,.10) 70%, rgba(6,7,11,.62) 100%),
+    linear-gradient(180deg, var(--void) 0%, transparent 24%, transparent 68%, var(--void) 100%);
+}
+.card--shot h2{ text-shadow:0 0 70px rgba(6,7,11,.9); }
+
+/* == ATO I - ORIGEM ============================================ */
+
+.act{ padding:clamp(4rem,10vh,9rem) var(--pad) clamp(6rem,16vh,13rem); }
+
+.coords{
+  display:flex; flex-wrap:wrap; align-items:center; gap:.6rem 1.4rem;
+  padding-bottom:1.2rem;
+  border-bottom:1px solid var(--line-soft);
+  margin-bottom:clamp(3rem,8vh,6rem);
+}
+
+.origin-grid{ display:grid; gap:clamp(2.6rem,7vh,5rem); }
+@media (min-width:900px){
+  .origin-grid{
+    grid-template-columns:minmax(0,7fr) minmax(0,5fr);
+    gap:clamp(2rem,6vw,7rem); align-items:start;
+  }
+  .origin-grid .aside{ padding-top:.6rem; }
+}
+
+.ledger{ border-top:1px solid var(--line-soft); margin:0; }
+.ledger div{
+  display:grid; grid-template-columns:5.5rem 1fr; gap:1.2rem;
+  padding:1.1rem 0; border-bottom:1px solid var(--line-soft);
+}
+.ledger dt{
+  font-family:var(--tele); font-size:.62rem; letter-spacing:.28em;
+  color:var(--burn); padding-top:.35em;
+}
+.ledger dd{ margin:0; color:var(--dim); font-size:.95rem; line-height:1.6; }
+.ledger dd b{ color:var(--ink); font-weight:400; display:block; }
+
+/* == ATO II - SPACEX ==========================================
+   Marte real + armadura orbital em 3D (CSS preserve-3d)
+   ============================================================ */
+
+.space{ position:relative; overflow:hidden; }
+
+.orbit-stage{
+  position:relative;
+  min-height:clamp(420px,74svh,780px);
+  margin:clamp(2rem,6vh,4rem) 0 clamp(3rem,8vh,6rem);
+}
+
+/* geometria compartilhada entre o planeta e a armadura */
+.mars,.rig{
+  position:absolute;
+  right:-8vw; top:50%;
+  width:clamp(300px,46vw,620px);
+  aspect-ratio:1;
+  translate:0 -50%;
+}
+@media (max-width:900px){
+  .mars,.rig{ right:-30vw; top:auto; bottom:-4%; translate:0 0; width:min(80vw,440px); }
+}
+
+.mars{
+  will-change:transform;
+  mix-blend-mode:screen;
+  /* recorta exatamente o disco: o preto do JPEG nao vira quadrado no screen */
+  -webkit-mask-image:radial-gradient(circle at 50% 50%, #000 46.5%, transparent 49%);
+          mask-image:radial-gradient(circle at 50% 50%, #000 46.5%, transparent 49%);
+}
+.mars img{ width:100%; height:100%; filter:contrast(1.06) saturate(.94) brightness(.86); }
+.mars::after{
+  content:""; position:absolute; inset:0; border-radius:50%;
+  background:radial-gradient(circle at 32% 30%, transparent 34%, rgba(6,7,11,.62) 78%, rgba(6,7,11,.92) 100%);
+  mix-blend-mode:multiply;
+}
+
+.rig{
+  z-index:1;
+  perspective:1400px;
+  pointer-events:none;
+}
+.rig-inner{
+  position:absolute; inset:-14%;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.rig-inner i{
+  position:absolute; inset:0;
+  border:1px solid rgba(255,138,61,.20);
+  border-radius:50%;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+}
+.rig-inner i:nth-child(2){ inset:8%;  border-color:rgba(233,229,220,.10); }
+.rig-inner i:nth-child(3){ inset:-9%; border-style:dashed; border-color:rgba(255,138,61,.13); }
+
+.traj{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:2; }
+.traj path{
+  fill:none; stroke:var(--burn); stroke-width:1;
+  stroke-dasharray:2 7; opacity:.55;
+}
+.traj .glow{ fill:rgba(255,138,61,.16); }
+.traj .ship{ fill:var(--ink); }
+
+.space-text{ position:relative; z-index:3; max-width:var(--measure); }
+
+.landing{
+  position:relative; z-index:3;
+  margin-top:clamp(3.5rem,9vh,6rem);
+  display:grid; gap:clamp(1.5rem,4vw,3rem);
+}
+@media (min-width:900px){
+  .landing{ grid-template-columns:minmax(0,7fr) minmax(0,4fr); align-items:end; }
+}
+.landing .note{ color:var(--dim); font-size:.95rem; max-width:30rem; }
+.landing .note b{
+  display:block;
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(1.6rem,1.1rem + 1.6vw,2.6rem);
+  color:var(--ink); letter-spacing:-.02em; line-height:1;
+  margin-bottom:.9rem;
+}
+
+.counters{
+  position:relative; z-index:3;
+  display:grid; gap:clamp(1.6rem,4vw,3rem);
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  margin-top:clamp(3rem,8vh,5rem);
+  padding-top:clamp(1.5rem,3vh,2.2rem);
+  border-top:1px solid var(--line-soft);
+  max-width:60rem;
+}
+.counter .n{
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(2.6rem,1.4rem + 3.4vw,4.6rem);
+  line-height:1; letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums lining-nums;
+}
+.counter .l{
+  margin-top:.85rem;
+  font-family:var(--tele); font-size:.62rem; letter-spacing:.26em;
+  text-transform:uppercase; color:var(--dim); line-height:1.9;
+}
+
+/* == ATO III - TESLA =========================================== */
+
+.road{
+  position:relative; min-height:100svh; overflow:hidden;
+  display:flex; align-items:flex-end;
+  padding:0 var(--pad) clamp(4rem,12vh,9rem);
+  background:linear-gradient(180deg, var(--void) 0%, var(--deep) 58%, var(--void) 100%);
+}
+.horizon{
+  position:absolute; left:0; right:0; top:52%; height:1px;
+  background:linear-gradient(90deg, transparent, var(--line) 12%, rgba(255,138,61,.55) 50%, var(--line) 88%, transparent);
+}
+.sun{
+  position:absolute; left:50%; top:52%;
+  translate:-50% -100%;
+  width:min(64vw,620px); aspect-ratio:2/1;
+  border-radius:300px 300px 0 0;
+  background:radial-gradient(ellipse at 50% 100%, var(--burn), rgba(255,138,61,.35) 62%, rgba(255,138,61,0) 100%);
+  filter:blur(6px); opacity:.28;
+}
+.asphalt{
+  position:absolute; left:0; right:0; top:52%; bottom:0;
+  background:linear-gradient(180deg, rgba(11,13,20,.2), var(--void) 70%);
+}
+.lane{
+  position:absolute; left:50%; top:52%; bottom:-2%;
+  width:min(56vw,760px); translate:-50% 0;
+  clip-path:polygon(49.4% 0, 50.6% 0, 100% 100%, 0 100%);
+  background-image:repeating-linear-gradient(180deg,
+      rgba(233,229,220,.55) 0 4%, rgba(233,229,220,0) 4% 10%);
+  background-size:100% 220px;
+  animation:lane 2600ms linear infinite;
+  opacity:.5;
+  -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 22%, #000 100%);
+          mask-image:linear-gradient(180deg, transparent 0%, #000 22%, #000 100%);
+}
+@keyframes lane{ from{ background-position-y:0 } to{ background-position-y:220px } }
+
+.road-copy{ position:relative; z-index:3; max-width:var(--measure); }
+.road-copy .tele{ margin-bottom:1.4rem; }
+
+.arc{
+  position:relative; z-index:3;
+  display:flex; flex-wrap:wrap; align-items:baseline;
+  gap:.5rem clamp(1rem,2.4vw,2rem);
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(1.3rem,.9rem + 1.6vw,2.4rem);
+  letter-spacing:-.02em;
+}
+.arc span{ color:var(--ink); }
+.arc i{ color:var(--burn); font-style:normal; font-size:.5em; translate:0 -.25em; }
+
+/* == SEQUENCIA DE QUADROS (scroll scrub, plano em 3D) ==========
+   Quatro fotografias reais do mesmo evento, ordenadas pelo
+   angulo da cabeca. O scroll troca o quadro; o plano gira de
+   verdade em rotateY. Nenhum angulo foi sintetizado.
+   ============================================================ */
+
+.poses{ position:relative; height:300vh; background:var(--void); }
+
+.poses-inner{
+  position:sticky; top:0;
+  height:100svh;
+  display:grid; align-items:center;
+  padding:clamp(4.5rem,10vh,7rem) var(--pad) clamp(3.5rem,8vh,5rem);
+  gap:clamp(1.5rem,4vw,4rem);
+  overflow:hidden;
+}
+@media (min-width:900px){
+  .poses-inner{ grid-template-columns:minmax(0,5fr) minmax(0,6fr); }
+}
+
+.pose-stage{
+  position:relative;
+  height:100%;
+  min-height:0;
+  perspective:1500px;
+  perspective-origin:50% 50%;
+}
+
+.pose-rig{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+
+.pose{
+  position:absolute; inset:0;
+  overflow:hidden;
+  opacity:0;
+  backface-visibility:hidden;
+  /* esfumado nas quatro bordas: o retrato emerge do fundo, sem moldura */
+  -webkit-mask-image:radial-gradient(78% 72% at 50% 46%, #000 42%, transparent 92%);
+          mask-image:radial-gradient(78% 72% at 50% 46%, #000 42%, transparent 92%);
+}
+.pose img{
+  width:100%; height:100%;
+  object-fit:cover;
+  transform:scale(var(--z,1.3));
+  transform-origin:50% 24%;
+  filter:grayscale(1) contrast(1.3) brightness(.66);
+}
+.pose::before{
+  content:""; position:absolute; inset:0; z-index:2;
+  background:var(--burn); mix-blend-mode:color; opacity:.5;
+}
+.pose::after{
+  content:""; position:absolute; inset:0; z-index:3;
+  background:radial-gradient(72% 66% at 50% 44%, transparent 30%, rgba(6,7,11,.72) 100%);
+}
+
+/* eixo de referencia atras do retrato: da leitura de espaco 3D */
+.pose-axis{
+  position:absolute; inset:12% 18%;
+  border:1px solid var(--line-soft);
+  transform:rotateY(0deg);
+  pointer-events:none;
+}
+.pose-axis::before,.pose-axis::after{
+  content:""; position:absolute; background:var(--line-soft);
+}
+.pose-axis::before{ left:50%; top:-6%; bottom:-6%; width:1px; }
+.pose-axis::after{ top:50%; left:-6%; right:-6%; height:1px; }
+
+.pose-hud{
+  position:absolute; left:0; bottom:0; z-index:6;
+  display:flex; align-items:center; gap:1rem;
+  font-family:var(--tele); font-size:.6rem; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--dim);
+}
+.pose-hud b{ color:var(--burn); font-weight:400; }
+.pose-hud .ticks{ display:flex; gap:.5rem; }
+.pose-hud .ticks i{
+  width:16px; height:1px; background:var(--line);
+  transition:background-color 500ms var(--exp);
+}
+.pose-hud .ticks i.on{ background:var(--burn); }
+
+.poses-copy{ position:relative; z-index:4; }
+.poses-copy h2{
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(2rem,5.2vw,4.4rem);
+  line-height:.98; letter-spacing:-.03em;
+  margin-bottom:clamp(1.4rem,3vh,2.2rem);
+  max-width:16ch;
+}
+.poses-copy p{ color:var(--dim); max-width:34rem; }
+.poses-copy p + p{ margin-top:1.3em; }
+.poses-copy .credit{
+  margin-top:clamp(1.8rem,4vh,2.6rem);
+  padding-top:1.2rem;
+  border-top:1px solid var(--line-soft);
+  font-family:var(--tele); font-size:.58rem;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--dim); line-height:2;
+}
+.poses-copy .credit b{ color:var(--ink); font-weight:400; }
+
+@media (max-width:899px){
+  .poses{ height:240vh; }
+  .poses-inner{ grid-template-rows:minmax(0,1fr) auto; }
+  .poses-copy h2{ font-size:clamp(1.6rem,7vw,2.4rem); }
+  .poses-copy p:not(:first-of-type),.poses-copy .credit{ display:none; }
+}
+
+/* == ATO IV - FRENTES PARALELAS ================================ */
+
+.fronts{
+  display:grid; gap:1px;
+  background:var(--line);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  margin-top:clamp(2rem,6vh,4rem);
+}
+@media (min-width:720px){ .fronts{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+.front{
+  background:var(--void);
+  padding:clamp(2rem,4.5vw,4rem) clamp(1.5rem,3.5vw,3.5rem) clamp(3rem,7vw,5.5rem);
+  transition:background-color 1000ms var(--exp),
+             opacity 900ms var(--exp), transform 900ms var(--exp);
+  display:flex; flex-direction:column; gap:1.2rem;
+  min-height:clamp(320px,42vh,440px);
+}
+.front:hover{ background:var(--deep); }
+.front .ix{ font-family:var(--tele); font-size:.62rem; letter-spacing:.3em; color:var(--burn); }
+.front h3{
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(1.9rem,1.2rem + 2vw,3.2rem);
+  line-height:.98; letter-spacing:-.025em;
+}
+.front p{ color:var(--dim); max-width:34rem; font-size:.98rem; }
+.front .yr{
+  margin-top:auto;
+  font-family:var(--tele); font-size:.62rem; letter-spacing:.26em;
+  color:var(--dim); padding-top:1.4rem;
+}
+.front .yr b{ color:var(--ink); font-weight:400; }
+
+/* == ATO V - CRONOLOGIA ======================================== */
+
+.log{
+  margin-top:clamp(2.5rem,7vh,4.5rem);
+  border-left:1px solid var(--line);
+  padding-left:clamp(1.6rem,4vw,3.4rem);
+  max-width:56rem;
+}
+.entry{ position:relative; padding:clamp(1.3rem,3vh,2rem) 0; }
+.entry + .entry{ border-top:1px solid var(--line-soft); }
+.entry .dot{
+  position:absolute;
+  left:calc(-1 * clamp(1.6rem,4vw,3.4rem) - 5px);
+  top:calc(clamp(1.3rem,3vh,2rem) + .5em);
+  width:9px; height:9px; border-radius:50%;
+  border:1px solid var(--line); background:var(--void);
+  transition:background-color 800ms var(--exp),
+             border-color 800ms var(--exp), box-shadow 800ms var(--exp);
+}
+.entry.on .dot{
+  background:var(--burn); border-color:var(--burn);
+  box-shadow:0 0 0 4px rgba(255,138,61,.12);
+}
+.entry .yr{
+  font-family:var(--tele); font-size:.68rem; letter-spacing:.3em;
+  color:var(--dim); transition:color 800ms var(--exp);
+}
+.entry.on .yr{ color:var(--burn); }
+.entry .ev{
+  margin-top:.55rem;
+  font-size:clamp(1.02rem,.9rem + .35vw,1.2rem);
+  color:var(--ink); letter-spacing:-.005em; max-width:44rem;
+}
+.entry .ev small{
+  display:block; margin-top:.4rem;
+  font-size:.88rem; color:var(--dim); letter-spacing:0;
+}
+
+/* == CREDITOS ================================================== */
+
+.credits{
+  position:relative;
+  padding:clamp(7rem,18vh,15rem) var(--pad) clamp(3rem,7vh,5rem);
+  border-top:1px solid var(--line-soft);
+  overflow:hidden;
+}
+.credits-bg{
+  position:absolute; left:0; right:0; bottom:0;
+  height:min(62vh,620px); z-index:0; overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 72%);
+          mask-image:linear-gradient(180deg, transparent 0%, #000 72%);
+}
+/* esfumado lateral por sobreposicao: independe de mask-composite */
+.credits-bg::after{
+  content:""; position:absolute; inset:0; z-index:2;
+  background:linear-gradient(90deg, var(--void) 0%, transparent 18%, transparent 82%, var(--void) 100%);
+}
+.credits-bg img{
+  position:absolute; left:0; top:0;
+  width:100%; height:112%;
+  object-fit:cover; object-position:50% 42%;
+  transform:scaleX(-1);
+  filter:contrast(1.05) saturate(.7) brightness(.5);
+  opacity:.62;
+}
+.credits > *:not(.credits-bg){ position:relative; z-index:2; }
+
+.credits h2{
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(2rem,5vw,4.2rem);
+  line-height:1; letter-spacing:-.03em;
+  margin-bottom:clamp(2rem,5vh,3.2rem); max-width:18ch;
+}
+.credits h2 em{ font-style:italic; color:var(--burn); font-weight:700; }
+
+.sources{
+  margin-top:clamp(3rem,8vh,5rem);
+  padding-top:1.6rem;
+  border-top:1px solid var(--line-soft);
+  max-width:44rem;
+}
+.sources h3{
+  font-family:var(--tele); font-size:.6rem; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--burn); margin-bottom:1.2rem;
+}
+.sources ul{ margin:0; padding:0; list-style:none; }
+.sources li{
+  font-family:var(--tele); font-weight:300;
+  font-size:.62rem; letter-spacing:.14em;
+  color:var(--dim); line-height:2.1;
+}
+.sources li b{ color:var(--ink); font-weight:400; }
+
+.fin{
+  margin-top:clamp(5rem,13vh,9rem);
+  font-family:var(--display); font-style:italic; font-weight:700;
+  font-size:clamp(2rem,6vw,4rem);
+  letter-spacing:-.02em; color:var(--ink); text-align:center;
+}
+
+footer{
+  margin-top:clamp(4rem,10vh,7rem);
+  padding-top:1.5rem;
+  border-top:1px solid var(--line-soft);
+  display:flex; flex-wrap:wrap; gap:.8rem 2.2rem; justify-content:space-between;
+  font-family:var(--tele);
+  font-size:.6rem; letter-spacing:.28em; text-transform:uppercase;
+  color:var(--dim);
+}
+
+/* == MOVIMENTO REDUZIDO ======================================== */
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation:none !important;
+    transition:none !important;
+    scroll-behavior:auto !important;
+  }
+  .mask{ clip-path:none; }
+  .rise{ opacity:1; transform:none; }
+  .draw{ transform:scaleX(1); }
+  .shot--reveal{ clip-path:none; }
+  .cue .bar{ transform:scaleY(1); opacity:1; }
+  .entry .dot{ background:var(--burn); border-color:var(--burn); }
+  .entry .yr{ color:var(--burn); }
+  .mars{ will-change:auto; }
+
+  /* a sequencia vira uma prancha de contato estatica */
+  .poses{ height:auto; }
+  .poses-inner{ position:static; height:auto; display:block; }
+  .pose-stage{ height:auto; perspective:none; margin-bottom:2.5rem; }
+  .pose-rig{
+    position:static; display:grid; gap:1px;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    transform:none !important;
+  }
+  .pose{ position:relative; inset:auto; opacity:1 !important; aspect-ratio:4/5; }
+  .pose-axis,.pose-hud{ display:none; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="hud" aria-hidden="true">
+  <span class="id">Perfil documental</span>
+  <span class="sys">Fatos públicos · sem afiliação</span>
+</div>
+
+<div class="rail" aria-hidden="true">
+  <span id="railAct">Abertura</span>
+  <span class="track"><i id="railFill"></i></span>
+</div>
+
+<main>
+
+<!-- == ABERTURA ============================================== -->
+<section class="open" id="abertura">
+  <div class="open-shot" aria-hidden="true">
+    <img src="img/earth-limb.jpg" width="4256" height="2913" fetchpriority="high"
+         alt="" data-kb="0.06">
+  </div>
+
+  <div class="open-top">
+    <p class="tele eyebrow rise" style="--delay:120ms">Perfil documental · 1971 — presente</p>
+  </div>
+
+  <h1 class="display mask" id="heroTitle">MUSK</h1>
+
+  <div class="open-bottom">
+    <p class="open-sub rise" style="--delay:360ms">
+      Cinco atos sobre uma trajetória que atravessou o software, o
+      foguete, o automóvel e a praça pública — <em>montada apenas
+      com registro público</em>.
+    </p>
+    <div class="cue rise" style="--delay:520ms">
+      <span class="bar"></span>
+      <span>Role para começar</span>
+    </div>
+  </div>
+</section>
+
+<!-- == ATO I ================================================= -->
+<section class="card solid" id="ato-1">
+  <p class="num mask">Ato I</p>
+  <h2 class="display mask" style="--delay:120ms">Origem</h2>
+  <div class="rule draw" style="--delay:280ms"></div>
+</section>
+
+<section class="act solid">
+  <div class="coords">
+    <span class="tele rise">25.7479° S, 28.2293° E — <b>Pretória</b></span>
+    <span class="tele rise" style="--delay:120ms">África do Sul · 1971</span>
+  </div>
+
+  <div class="origin-grid">
+    <div class="prose">
+      <p class="lead rise">
+        A biografia começa longe de qualquer indústria que ele viria
+        a ocupar.
+      </p>
+      <p class="rise" style="--delay:120ms">
+        Elon Musk nasceu em Pretória, na África do Sul, em 1971.
+        Aos doze anos vendeu um jogo de computador que havia escrito
+        sozinho — o primeiro registro público de um padrão que se
+        repetiria: construir a coisa inteira antes de perguntar se
+        havia mercado para ela. A adolescência transcorre longe do
+        Vale do Silício, e a mudança para a América do Norte antecede
+        qualquer empresa.
+      </p>
+      <p class="rise" style="--delay:240ms">
+        A primeira companhia foi a <strong>Zip2</strong>, software de
+        publicação para jornais que tentavam existir na internet. Em
+        1999 ela foi vendida por <strong>US$ 307 milhões</strong>. O
+        produto era mundano; o resultado, não. Foi ali que a engenharia
+        deixou de ser vocação e virou capital — a matéria-prima de
+        tudo o que veio depois.
+      </p>
+      <p class="rise" style="--delay:360ms">
+        Em seguida veio a <strong>X.com</strong>, banco pela internet
+        numa época em que a expressão soava imprudente. A fusão que se
+        seguiu deu origem ao <strong>PayPal</strong>, vendido ao eBay
+        em <strong>2002 por US$ 1,5 bilhão</strong>. Aos trinta e um
+        anos, ele tinha dinheiro suficiente para parar. Dedicou-o a
+        dois setores conhecidos por consumir fortunas sem devolvê-las:
+        foguetes e automóveis.
+      </p>
+    </div>
+
+    <div class="aside">
+      <dl class="ledger">
+        <div class="rise" style="--delay:120ms">
+          <dt>1971</dt>
+          <dd><b>Pretória</b>Nascimento.</dd>
+        </div>
+        <div class="rise" style="--delay:200ms">
+          <dt>aos 12</dt>
+          <dd><b>Primeiro código vendido</b>Um jogo, escrito e comercializado por ele.</dd>
+        </div>
+        <div class="rise" style="--delay:280ms">
+          <dt>1999</dt>
+          <dd><b>Zip2</b>Vendida por US$ 307 milhões.</dd>
+        </div>
+        <div class="rise" style="--delay:360ms">
+          <dt>2002</dt>
+          <dd><b>PayPal</b>Vendido ao eBay por US$ 1,5 bilhão.</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- == ATO II ================================================ -->
+<section class="card card--shot" id="ato-2">
+  <div class="card-bg" aria-hidden="true">
+    <img src="img/launch-streak.jpg" width="1920" height="1280" loading="lazy"
+         decoding="async" alt="" data-kb="0.08">
+  </div>
+  <p class="num mask">Ato II</p>
+  <h2 class="display mask" style="--delay:120ms">O foguete</h2>
+  <div class="rule draw" style="--delay:280ms"></div>
+  <p class="tele rise" style="--delay:420ms">
+    Exposição longa de um lançamento noturno · <b>NASA</b>
+  </p>
+</section>
+
+<section class="act space" id="spacex">
+  <div class="orbit-stage">
+    <div class="rig" aria-hidden="true">
+      <div class="rig-inner" id="rigInner">
+        <i style="--rx:76deg;--ry:0deg"></i>
+        <i style="--rx:70deg;--ry:58deg"></i>
+        <i style="--rx:22deg;--ry:-34deg"></i>
+      </div>
+    </div>
+
+    <div class="mars" id="mars" aria-hidden="true">
+      <img src="img/mars.jpg" width="1920" height="1920" loading="lazy" decoding="async" alt="">
+    </div>
+
+    <svg class="traj" id="traj" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <path id="trajPath" d="M -40 600 C 220 560, 300 300, 520 232 S 800 190, 1010 92"/>
+      <circle id="shipGlow" class="glow" cx="-40" cy="600" r="13"/>
+      <circle id="ship" class="ship" cx="-40" cy="600" r="3.4"/>
+    </svg>
+  </div>
+
+  <div class="space-text prose">
+    <p class="tele eyebrow rise" style="margin-bottom:1.6rem">SpaceX · fundada em 2002</p>
+    <p class="lead rise" style="--delay:120ms">
+      A tese era simples de enunciar e cara de provar: um foguete que
+      volta inteiro custa outra ordem de grandeza.
+    </p>
+    <p class="rise" style="--delay:240ms">
+      A <strong>SpaceX</strong> foi fundada em 2002 para reduzir o
+      custo de acesso ao espaço. O Falcon 1 falhou três vezes
+      seguidas. A quarta tentativa, em <strong>2008</strong>, alcançou
+      a órbita — a empresa estava a um lançamento do fim. Em
+      <strong>2015</strong>, um propulsor do Falcon 9 voltou e pousou
+      de pé, convertendo o trecho mais caro do voo em hardware
+      reutilizável.
+    </p>
+    <p class="rise" style="--delay:360ms">
+      Em <strong>2020</strong> a empresa levou astronautas à Estação
+      Espacial Internacional, a primeira vez que uma companhia privada
+      o fez. <strong>Starlink</strong> e <strong>Starship</strong>
+      seguem em desenvolvimento: um voltado à conectividade em órbita
+      baixa, o outro a cargas e destinos que ainda não têm cronograma
+      fechado.
+    </p>
+  </div>
+
+  <div class="landing">
+    <figure>
+      <div class="shot shot--duo shot--scope shot--reveal">
+        <img src="img/booster-landing.jpg" width="1280" height="1920" loading="lazy"
+             decoding="async" data-kb="0.1"
+             alt="Primeiro estágio de um Falcon 9 descendo sob acionamento de motor, visto de longe sobre a costa.">
+      </div>
+      <figcaption>
+        <span>Descida propulsada do primeiro estágio</span>
+        <span><b>NASA</b>/Kim Shiflett</span>
+      </figcaption>
+    </figure>
+
+    <div class="note rise">
+      <b>O estágio<br>que volta</b>
+      O trecho mais caro de um lançamento sempre foi o primeiro
+      estágio, descartado no mar. Recuperá-lo de pé foi a mudança
+      que reordenou o custo de tudo o que vem depois.
+    </div>
+  </div>
+
+  <div class="counters">
+    <div class="counter rise">
+      <div class="n" data-count="2008">1948</div>
+      <div class="l">Primeira órbita<br>Falcon 1, quarta tentativa</div>
+    </div>
+    <div class="counter rise" style="--delay:140ms">
+      <div class="n" data-count="2015">1955</div>
+      <div class="l">Primeiro pouso<br>Propulsor do Falcon 9</div>
+    </div>
+    <div class="counter rise" style="--delay:280ms">
+      <div class="n" data-count="2020">1960</div>
+      <div class="l">Primeiro voo tripulado<br>Rumo à ISS</div>
+    </div>
+  </div>
+</section>
+
+<!-- == ATO III =============================================== -->
+<section class="card solid" id="ato-3">
+  <p class="num mask">Ato III</p>
+  <h2 class="display mask" style="--delay:120ms">A estrada</h2>
+  <div class="rule draw" style="--delay:280ms"></div>
+</section>
+
+<section class="road" id="tesla">
+  <div class="sun" aria-hidden="true"></div>
+  <div class="asphalt" aria-hidden="true"></div>
+  <div class="horizon" aria-hidden="true"></div>
+  <div class="lane" aria-hidden="true"></div>
+
+  <div class="road-copy prose">
+    <p class="tele eyebrow rise">Tesla · investidor em 2004, CEO em 2008</p>
+    <p class="lead rise" style="--delay:120ms">
+      O carro elétrico existia havia um século. Faltava alguém
+      disposto a vendê-lo como objeto de desejo.
+    </p>
+    <p class="rise" style="--delay:240ms">
+      Musk entrou na <strong>Tesla</strong> como investidor em 2004 e
+      assumiu como <strong>CEO em 2008</strong>. O roteiro foi
+      declarado cedo e cumprido em ordem: um esportivo caro para
+      financiar um sedã, e um sedã para financiar um carro de volume.
+      <strong>Roadster</strong>, <strong>Model S</strong>,
+      <strong>Model 3</strong> — cada um pagando o desenvolvimento do
+      seguinte, com a produção em massa como o obstáculo mais duro de
+      todos.
+    </p>
+    <p class="rise" style="--delay:360ms">
+      Em <strong>2020</strong> a Tesla tornou-se a montadora mais
+      valiosa do mundo. Nenhuma fabricante nova havia sobrevivido
+      tanto tempo no mercado americano em quase um século.
+    </p>
+  </div>
+</section>
+
+<!-- == SEQUENCIA DE QUADROS ================================== -->
+<section class="poses" id="poses">
+  <div class="poses-inner">
+    <div class="pose-stage">
+      <div class="pose-axis" id="poseAxis" aria-hidden="true"></div>
+
+      <div class="pose-rig" id="poseRig">
+        <figure class="pose" style="--z:1.28">
+          <img src="img/pose-1.jpg" width="1280" height="853" loading="lazy" decoding="async"
+               style="object-position:48% 34%"
+               alt="Elon Musk de frente para a câmera durante um encontro aberto da Tesla em Amsterdã, 2014.">
+        </figure>
+        <figure class="pose" style="--z:1.78">
+          <img src="img/pose-2.jpg" width="1280" height="853" loading="lazy" decoding="async"
+               style="object-position:46% 32%"
+               alt="Elon Musk quase de frente, com o microfone na mão, no mesmo encontro.">
+        </figure>
+        <figure class="pose" style="--z:1.46">
+          <img src="img/pose-3.jpg" width="1280" height="853" loading="lazy" decoding="async"
+               style="object-position:50% 34%"
+               alt="Elon Musk de três quartos, com o rosto voltado para a lateral.">
+        </figure>
+        <figure class="pose" style="--z:1.66">
+          <img src="img/pose-4.jpg" width="1280" height="853" loading="lazy" decoding="async"
+               style="object-position:34% 24%"
+               alt="Elon Musk de perfil, falando ao microfone.">
+        </figure>
+      </div>
+
+      <div class="pose-hud" aria-hidden="true">
+        <span>Quadro <b id="poseNum">01</b> / 04</span>
+        <span class="ticks" id="poseTicks"><i></i><i></i><i></i><i></i></span>
+      </div>
+    </div>
+
+    <div class="poses-copy">
+      <h2 class="display">Quatro<br>quadros,<br>um minuto.</h2>
+      <p>
+        Amsterdã, 31 de janeiro de 2014. Um encontro aberto com
+        proprietários de Tesla, fotografado por um clube de donos de
+        carro — não por uma agência. A sequência abaixo são quatro
+        exposições do mesmo minuto, ordenadas pelo ângulo da cabeça:
+        de frente, quase de frente, três quartos, perfil.
+      </p>
+      <p>
+        O scroll troca o quadro e gira o plano. O giro do plano é
+        efeito; o giro da cabeça é o que a câmera registrou.
+      </p>
+      <p class="credit">
+        Fotografias de <b>Maarten Van Aerde</b><br>
+        Tesla Owners Club Belgium · <b>CC BY 2.0</b><br>
+        Enquadramento fechado sobre os originais
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="act solid">
+  <div class="arc">
+    <span class="rise">Roadster</span><i class="rise" style="--delay:80ms">&#9656;</i>
+    <span class="rise" style="--delay:160ms">Model S</span><i class="rise" style="--delay:240ms">&#9656;</i>
+    <span class="rise" style="--delay:320ms">Model 3</span>
+  </div>
+</section>
+
+<!-- == ATO IV ================================================ -->
+<section class="card solid" id="ato-4">
+  <p class="num mask">Ato IV</p>
+  <h2 class="display mask" style="--delay:120ms">Frentes paralelas</h2>
+  <div class="rule draw" style="--delay:280ms"></div>
+</section>
+
+<section class="act solid" style="padding-top:0">
+  <div class="prose">
+    <p class="rise">
+      A partir de 2015 a atividade deixa de ser sequencial. Quatro
+      frentes abrem-se em paralelo, em setores sem relação técnica
+      entre si — e nenhuma delas substitui as anteriores.
+    </p>
+  </div>
+
+  <div class="fronts">
+    <article class="front rise">
+      <p class="ix">01</p>
+      <h3>OpenAI<br>&amp; xAI</h3>
+      <p>Cofundou a OpenAI em 2015, deixou o conselho em 2018 e mais
+         tarde fundou a xAI. Duas passagens pelo mesmo campo, com
+         posições distintas sobre como ele deveria ser conduzido.</p>
+      <p class="yr"><b>2015</b> · 2018 · xAI</p>
+    </article>
+
+    <article class="front rise" style="--delay:120ms">
+      <p class="ix">02</p>
+      <h3>Neuralink</h3>
+      <p>Fundada em 2016 para desenvolver interfaces entre cérebro e
+         computador. O primeiro implante em um ser humano foi
+         realizado em 2024.</p>
+      <p class="yr"><b>2016</b> · primeiro implante em 2024</p>
+    </article>
+
+    <article class="front rise" style="--delay:240ms">
+      <p class="ix">03</p>
+      <h3>The Boring<br>Company</h3>
+      <p>Fundada em 2016 com uma premissa de infraestrutura: se a
+         superfície está saturada, o problema a resolver é o custo de
+         escavar embaixo dela.</p>
+      <p class="yr"><b>2016</b></p>
+    </article>
+
+    <article class="front rise" style="--delay:360ms">
+      <p class="ix">04</p>
+      <h3>X</h3>
+      <p>Comprou o Twitter em 2022 por US$ 44 bilhões e o renomeou
+         como X. Foi a primeira vez que sua trajetória se deslocou da
+         engenharia para a esfera pública.</p>
+      <p class="yr"><b>2022</b> · US$ 44 bilhões</p>
+    </article>
+  </div>
+</section>
+
+<!-- == ATO V ================================================= -->
+<section class="card solid" id="ato-5">
+  <p class="num mask">Ato V</p>
+  <h2 class="display mask" style="--delay:120ms">Registro de bordo</h2>
+  <div class="rule draw" style="--delay:280ms"></div>
+</section>
+
+<section class="act solid">
+  <p class="tele eyebrow rise">Cronologia · apenas registro público</p>
+
+  <div class="log">
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">1971</p>
+      <p class="ev">Nasce em Pretória, África do Sul.</p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">aos 12</p>
+      <p class="ev">Vende um jogo de computador escrito por ele mesmo.</p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">1999</p>
+      <p class="ev">Zip2 é vendida por US$ 307 milhões.<small>Primeira empresa: software de publicação para jornais.</small></p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">2002</p>
+      <p class="ev">PayPal é vendido ao eBay por US$ 1,5 bilhão; a SpaceX é fundada.<small>O capital de uma saída financia o setor seguinte.</small></p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">2004</p>
+      <p class="ev">Entra na Tesla como investidor.</p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">2008</p>
+      <p class="ev">Falcon 1 alcança a órbita na quarta tentativa; assume como CEO da Tesla.<small>Três falhas consecutivas antecederam o voo.</small></p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">2014</p>
+      <p class="ev">Encontro aberto com proprietários em Amsterdã.<small>Origem dos quatro quadros do Ato III.</small></p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">2015</p>
+      <p class="ev">Propulsor do Falcon 9 pousa de volta; cofunda a OpenAI.</p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">2016</p>
+      <p class="ev">Funda a Neuralink e a Boring Company.</p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">2018</p>
+      <p class="ev">Deixa o conselho da OpenAI.</p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">2020</p>
+      <p class="ev">Voo tripulado à ISS; Tesla torna-se a montadora mais valiosa do mundo.</p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">2022</p>
+      <p class="ev">Compra o Twitter por US$ 44 bilhões e o renomeia como X.</p>
+    </div>
+    <div class="entry"><span class="dot"></span>
+      <p class="yr">2024</p>
+      <p class="ev">Neuralink realiza o primeiro implante em um ser humano.</p>
+    </div>
+  </div>
+</section>
+
+<!-- == CREDITOS ============================================== -->
+<section class="credits solid" id="creditos">
+  <div class="credits-bg" aria-hidden="true">
+    <img src="img/earth-limb.jpg" width="4256" height="2913" loading="lazy" decoding="async" alt="">
+  </div>
+
+  <h2 class="display mask">Um retrato,<br>não um <em>veredito</em>.</h2>
+
+  <div class="prose">
+    <p class="rise">
+      Poucas figuras contemporâneas dividem tanto. Para uma parte do
+      público, a trajetória acima é a de um engenheiro que devolveu
+      ambição a setores que a haviam perdido. Para outra, é a de uma
+      concentração de poder e de atenção cujos efeitos ainda estão
+      sendo medidos. As duas leituras se apoiam nos mesmos fatos.
+    </p>
+    <p class="rise" style="--delay:140ms">
+      Esta página não tenta arbitrar entre elas. Reúne apenas
+      informação de domínio público — anos, empresas, transações
+      encerradas — e deixa a interpretação onde ela pertence: fora do
+      documento. Nenhuma declaração é atribuída a Elon Musk, e nenhuma
+      imagem foi gerada, retocada ou reencenada: as quatro do Ato III
+      são exposições reais do mesmo evento, apenas reenquadradas.
+    </p>
+  </div>
+
+  <div class="sources rise">
+    <h3>Fotografia</h3>
+    <ul>
+      <li><b>Limbo da atmosfera ao amanhecer</b> — ISS023E057948 · NASA, Expedição 23</li>
+      <li><b>Lançamento noturno, exposição longa</b> — KSC-20250115-PH-FMX02_0001 · NASA</li>
+      <li><b>Marte, mosaico global</b> — PIA00407 · NASA/JPL/USGS</li>
+      <li><b>Descida propulsada do primeiro estágio</b> — KSC-20240130-PH-KLS01_0111 · NASA/Kim Shiflett</li>
+      <li><b>Quatro quadros, Amsterdã, 31.01.2014</b> — Maarten Van Aerde / Tesla Owners Club Belgium · CC BY 2.0</li>
+      <li>Imagens da NASA em domínio público. A NASA não endossa esta página.</li>
+    </ul>
+  </div>
+
+  <p class="fin rise" style="--delay:280ms">fin.</p>
+
+  <footer>
+    <span>Fatos públicos · sem afiliação</span>
+    <span>NASA · domínio público · CC BY 2.0</span>
+    <span>Bodoni Moda · Archivo · IBM Plex Mono</span>
+  </footer>
+</section>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ============================================================
+     1. STARFIELD 3D
+     Pontos num tronco de piramide, projecao em perspectiva real.
+     A camera avanca com o scroll; o mouse orbita em yaw/pitch.
+     ============================================================ */
+
+  var canvas = document.getElementById('stars');
+  var ctx = canvas.getContext('2d');
+  var stars = [];
+  var W = 0, H = 0, DPR = 1;
+  var DEPTH = 3.4;
+  var mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+
+  function buildStars(){
+    stars.length = 0;
+    for (var i = 0; i < 460; i++){
+      var z0 = 0.25 + Math.random() * DEPTH;
+      stars.push({
+        // x,y proporcionais a z0: cobertura uniforme em toda a profundidade
+        x: (Math.random() * 2 - 1) * z0 * 1.25,
+        y: (Math.random() * 2 - 1) * z0 * 1.25,
+        z: z0,
+        r: 0.4 + Math.random() * 1.05,
+        phase: Math.random() * Math.PI * 2,
+        warm: Math.random() < 0.07
+      });
+    }
+  }
+
+  function sizeCanvas(){
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width  = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+
+  function drawStars(t, scroll){
+    ctx.clearRect(0, 0, W, H);
+
+    var f  = Math.min(W, H) * 0.92;          // distancia focal, em pixels
+    var cx = W / 2, cy = H / 2;
+    var travel = (scroll * 0.0011) % DEPTH;  // camera avanca com o scroll
+
+    var yaw = mouse.x * 0.15, pitch = mouse.y * -0.10;
+    var cosY = Math.cos(yaw),   sinY = Math.sin(yaw);
+    var cosX = Math.cos(pitch), sinX = Math.sin(pitch);
+
+    for (var i = 0; i < stars.length; i++){
+      var s = stars[i];
+
+      var z = s.z - travel;
+      if (z <= 0.08) z += DEPTH;             // wrap: volta ao fundo
+
+      // rotacao em Y (yaw)
+      var x1 = s.x * cosY - z * sinY;
+      var z1 = s.x * sinY + z * cosY;
+      // rotacao em X (pitch)
+      var y1 = s.y * cosX - z1 * sinX;
+      var z2 = s.y * sinX + z1 * cosX;
+      if (z2 <= 0.08) continue;
+
+      var sx = cx + (x1 / z2) * f;
+      var sy = cy + (y1 / z2) * f;
+      if (sx < -20 || sx > W + 20 || sy < -20 || sy > H + 20) continue;
+
+      var near = 1 - Math.min(z2 / DEPTH, 1);          // 1 = colado na camera
+      var r = s.r * (0.28 + near * 1.25);
+      var a = (0.20 + 0.48 * Math.abs(Math.sin(t * 0.0008 + s.phase))) * (0.28 + near * 0.9);
+      if (a > 1) a = 1;
+
+      ctx.beginPath();
+      ctx.arc(sx, sy, r, 0, 6.2832);
+      ctx.fillStyle = s.warm
+        ? 'rgba(255,138,61,' + a.toFixed(3) + ')'
+        : 'rgba(233,229,220,' + a.toFixed(3) + ')';
+      ctx.fill();
+    }
+  }
+
+  sizeCanvas();
+  buildStars();
+
+  window.addEventListener('resize', function(){
+    sizeCanvas();
+    if (reduced) drawStars(0, 0);
+  }, { passive: true });
+
+  if (!reduced){
+    window.addEventListener('mousemove', function(e){
+      mouse.tx = (e.clientX / window.innerWidth  - 0.5) * 2;
+      mouse.ty = (e.clientY / window.innerHeight - 0.5) * 2;
+    }, { passive: true });
+  }
+
+  /* ============================================================
+     2. CENAS LIGADAS AO SCROLL
+     ============================================================ */
+
+  function progress(rect){
+    var p = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+    return p < 0 ? 0 : (p > 1 ? 1 : p);
+  }
+
+  var mars     = document.getElementById('mars');
+  var rigInner = document.getElementById('rigInner');
+  var spacex   = document.getElementById('spacex');
+  var path     = document.getElementById('trajPath');
+  var ship     = document.getElementById('ship');
+  var shipGlow = document.getElementById('shipGlow');
+  var pathLen  = path.getTotalLength();
+
+  var heroTitle = document.getElementById('heroTitle');
+  var railFill  = document.getElementById('railFill');
+  var railAct   = document.getElementById('railAct');
+
+  var kb = Array.prototype.map.call(
+    document.querySelectorAll('img[data-kb]'),
+    function(img){ return { img: img, amp: parseFloat(img.getAttribute('data-kb')) }; }
+  );
+
+  function updateShots(){
+    for (var i = 0; i < kb.length; i++){
+      var host = kb[i].img.parentNode;
+      var r = host.getBoundingClientRect();
+      if (r.bottom < -100 || r.top > window.innerHeight + 100) continue;
+      var p = progress(r);
+      var a = kb[i].amp;
+      kb[i].img.style.transform =
+        'scale(' + (1 + a * (1 - p)).toFixed(4) + ') translate3d(0,' + ((0.5 - p) * 26).toFixed(2) + 'px,0)';
+    }
+  }
+
+  // titulo da abertura flutua em Z, seguindo o mouse: profundidade real
+  function updateHero(){
+    var r = heroTitle.getBoundingClientRect();
+    if (r.bottom < 0) return;
+    heroTitle.style.transform =
+      'translateZ(70px) rotateY(' + (mouse.x * 3.2).toFixed(2) + 'deg) rotateX(' +
+      (mouse.y * -2.2).toFixed(2) + 'deg) translate3d(' +
+      (mouse.x * -14).toFixed(1) + 'px,' + (mouse.y * -8).toFixed(1) + 'px,0)';
+  }
+
+  function updateScene(){
+    var rect = spacex.getBoundingClientRect();
+    if (rect.bottom < -200 || rect.top > window.innerHeight + 200) return;
+
+    var p = progress(rect);
+
+    mars.style.transform =
+      'translateY(' + ((0.5 - p) * 120).toFixed(2) + 'px) rotate(' + (p * 8).toFixed(2) + 'deg)';
+
+    // armadura orbital: gira de verdade nos tres eixos
+    rigInner.style.transform =
+      'rotateX(' + (10 + p * 26).toFixed(2) + 'deg) rotateY(' + (p * 120 - 30).toFixed(2) +
+      'deg) rotateZ(' + (p * 14 - 7).toFixed(2) + 'deg)';
+
+    var pt = path.getPointAtLength(p * pathLen);
+    ship.setAttribute('cx', pt.x);
+    ship.setAttribute('cy', pt.y);
+    shipGlow.setAttribute('cx', pt.x);
+    shipGlow.setAttribute('cy', pt.y);
+  }
+
+  /* ============================================================
+     3. SEQUENCIA DE QUADROS
+     O scroll dissolve entre quatro exposicoes reais e gira o
+     plano que as sustenta. Nenhum angulo e sintetizado.
+     ============================================================ */
+
+  var poses   = document.getElementById('poses');
+  var poseRig = document.getElementById('poseRig');
+  var poseAxis= document.getElementById('poseAxis');
+  var poseNum = document.getElementById('poseNum');
+  var frames  = poses ? poses.querySelectorAll('.pose') : [];
+  var ticks   = document.getElementById('poseTicks');
+  var tickEls = ticks ? ticks.querySelectorAll('i') : [];
+  var lastIdx = -1;
+
+  function updatePoses(){
+    var r = poses.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > window.innerHeight) return;
+
+    var span = r.height - window.innerHeight;
+    var p = span > 0 ? (-r.top) / span : 0;
+    if (p < 0) p = 0; else if (p > 1) p = 1;
+
+    // dissolve continuo entre quadros adjacentes
+    var f = p * (frames.length - 1);
+    var i = Math.min(Math.floor(f), frames.length - 2);
+    var frac = f - i;
+
+    for (var k = 0; k < frames.length; k++){
+      var o = 0;
+      if (k === i) o = 1 - frac;
+      else if (k === i + 1) o = frac;
+      frames[k].style.opacity = o.toFixed(3);
+    }
+
+    // o plano gira: o retrato atravessa o espaco, nao so troca
+    var ry = (p - 0.5) * 30;
+    poseRig.style.transform =
+      'rotateY(' + ry.toFixed(2) + 'deg) rotateX(' + ((0.5 - p) * 6).toFixed(2) +
+      'deg) translateZ(' + (-60 + p * 120).toFixed(1) + 'px)';
+    poseAxis.style.transform = 'rotateY(' + (ry * 1.7).toFixed(2) + 'deg) scale(' + (1 + p * 0.06).toFixed(3) + ')';
+
+    var idx = Math.round(f);
+    if (idx !== lastIdx){
+      lastIdx = idx;
+      poseNum.textContent = '0' + (idx + 1);
+      for (var m = 0; m < tickEls.length; m++){
+        tickEls[m].classList.toggle('on', m === idx);
+      }
+    }
+  }
+
+  function updateRail(){
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var g = max > 0 ? window.scrollY / max : 0;
+    railFill.style.transform = 'scaleX(' + g.toFixed(4) + ')';
+  }
+
+  /* ============================================================
+     4. LOOP UNICO
+     ============================================================ */
+
+  if (reduced){
+    drawStars(0, 0);
+    updateScene();
+    updateRail();
+  } else {
+    requestAnimationFrame(function frame(t){
+      mouse.x += (mouse.tx - mouse.x) * 0.045;
+      mouse.y += (mouse.ty - mouse.y) * 0.045;
+      drawStars(t, window.scrollY);
+      updateShots();
+      updateHero();
+      updateScene();
+      updatePoses();
+      updateRail();
+      requestAnimationFrame(frame);
+    });
+  }
+
+  /* ============================================================
+     5. REVELACOES
+     ============================================================ */
+
+  var revealables = document.querySelectorAll('.mask, .rise, .draw, .entry, .shot--reveal');
+
+  if (reduced || !('IntersectionObserver' in window)){
+    Array.prototype.forEach.call(revealables, function(el){ el.classList.add('on'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('on');
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.25 });
+    Array.prototype.forEach.call(revealables, function(el){ io.observe(el); });
+
+    requestAnimationFrame(function(){ heroTitle.classList.add('on'); });
+  }
+
+  /* ============================================================
+     6. CONTADORES - easeOutQuart, 1600ms
+     ============================================================ */
+
+  function easeOutQuart(x){ return 1 - Math.pow(1 - x, 4); }
+
+  function runCounter(el){
+    var end   = parseInt(el.getAttribute('data-count'), 10);
+    var start = parseInt(el.textContent, 10);
+    var t0 = null;
+
+    requestAnimationFrame(function step(ts){
+      if (t0 === null) t0 = ts;
+      var k = Math.min((ts - t0) / 1600, 1);
+      el.textContent = String(Math.round(start + (end - start) * easeOutQuart(k)));
+      if (k < 1) requestAnimationFrame(step);
+      else el.textContent = String(end);
+    });
+  }
+
+  var counters = document.querySelectorAll('[data-count]');
+
+  if (reduced || !('IntersectionObserver' in window)){
+    Array.prototype.forEach.call(counters, function(el){
+      el.textContent = el.getAttribute('data-count');
+    });
+  } else {
+    var cio = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (!entry.isIntersecting) return;
+        runCounter(entry.target);
+        cio.unobserve(entry.target);
+      });
+    }, { threshold: 0.5 });
+    Array.prototype.forEach.call(counters, function(el){ cio.observe(el); });
+  }
+
+  /* ============================================================
+     7. INDICADOR DE ATO
+     ============================================================ */
+
+  var names = {
+    'abertura'  : 'Abertura',
+    'ato-1'     : 'Ato I · Origem',
+    'ato-2'     : 'Ato II · O foguete',
+    'ato-3'     : 'Ato III · A estrada',
+    'poses'     : 'Ato III · Quatro quadros',
+    'ato-4'     : 'Ato IV · Frentes',
+    'ato-5'     : 'Ato V · Registro',
+    'creditos'  : 'Créditos'
+  };
+
+  if ('IntersectionObserver' in window){
+    var aio = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting && names[entry.target.id]){
+          railAct.textContent = names[entry.target.id];
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+
+    Object.keys(names).forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) aio.observe(el);
+    });
+  }
+
+})();
+</script>
+</body>
+</html>

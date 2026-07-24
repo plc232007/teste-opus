@@ -1,0 +1,9 @@
+# Imagem de banco "premium" baixada avulsa, não usada por nenhuma página.
+# Redistribuir esse tipo de arquivo num repositório público esbarra na
+# licença — se ela for sua e você quiser publicá-la, apague esta linha.
+premium_photo-*.avif
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store

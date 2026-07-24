@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MUSK — Um Perfil Documental</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700;6..96,900&family=Archivo:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#06070b;
+  --deep:#0b0d14;
+  --ink:#e9e5dc;
+  --dim:#8b8878;
+  --burn:#ff8a3d;      /* queima de motor */
+  --mars:#c1543a;
+  --steel:#3d4a63;
+  --line:rgba(233,229,220,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:'Archivo',sans-serif;
+  font-weight:300;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+::selection{background:var(--burn);color:var(--void)}
+
+/* ---------- textura de filme ---------- */
+.grain{
+  position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.06'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.vignette{
+  position:fixed;inset:0;pointer-events:none;z-index:89;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%);
+}
+
+/* ---------- tipografia ---------- */
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--burn);font-weight:300;
+}
+.display{
+  font-family:'Bodoni Moda',serif;
+  font-weight:900;line-height:.9;letter-spacing:-.01em;
+}
+.mono{font-family:'IBM Plex Mono',monospace;font-weight:300}
+
+/* ---------- hero ---------- */
+#stars{position:fixed;inset:0;z-index:0}
+.hero{
+  position:relative;min-height:100svh;z-index:2;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:2rem;
+}
+.hero .eyebrow{margin-bottom:2rem;opacity:0;animation:fadeUp 1.4s .3s cubic-bezier(.16,1,.3,1) forwards}
+.hero h1{
+  font-size:clamp(5rem,24vw,22rem);
+  color:var(--ink);
+  opacity:0;animation:titleIn 2.2s .6s cubic-bezier(.16,1,.3,1) forwards;
+}
+.hero .sub{
+  margin-top:1.5rem;max-width:34rem;color:var(--dim);font-size:.95rem;
+  opacity:0;animation:fadeUp 1.4s 1.4s cubic-bezier(.16,1,.3,1) forwards;
+}
+.scroll-cue{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.8rem;
+  opacity:0;animation:fadeUp 1.4s 2.2s cubic-bezier(.16,1,.3,1) forwards;
+}
+.scroll-cue .line{width:1px;height:56px;background:var(--line);overflow:hidden;position:relative}
+.scroll-cue .line::after{
+  content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;
+  background:var(--burn);animation:drop 2.4s cubic-bezier(.16,1,.3,1) infinite;
+}
+@keyframes drop{0%{top:-100%}60%,100%{top:100%}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes titleIn{
+  from{opacity:0;transform:translateY(40px);clip-path:inset(0 0 100% 0)}
+  to{opacity:1;transform:none;clip-path:inset(0 0 0% 0)}
+}
+
+/* ---------- estrutura de capítulos ---------- */
+main{position:relative;z-index:2}
+.chapter{
+  position:relative;min-height:100svh;
+  display:flex;align-items:center;
+  padding:clamp(4rem,10vw,9rem) clamp(1.5rem,7vw,8rem);
+  background:linear-gradient(var(--void),var(--void));
+}
+.chapter .inner{max-width:72rem;margin:0 auto;width:100%;position:relative;z-index:3}
+.chapter h2{
+  font-size:clamp(2.8rem,8vw,7rem);margin:1.2rem 0 2.5rem;
+}
+.chapter p.lead{max-width:38rem;color:var(--ink);font-size:clamp(1rem,1.4vw,1.2rem)}
+.chapter p.body-t{max-width:38rem;color:var(--dim);margin-top:1.4rem;font-size:.95rem}
+
+/* reveal por máscara */
+.reveal{opacity:0;transform:translateY(36px);transition:opacity 1.1s cubic-bezier(.16,1,.3,1),transform 1.1s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal-mask{clip-path:inset(0 0 100% 0);transition:clip-path 1.3s cubic-bezier(.16,1,.3,1)}
+.reveal-mask.in{clip-path:inset(0 0 0% 0)}
+.d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}
+
+/* ---------- prólogo ---------- */
+.prologue .inner{display:grid;grid-template-columns:1fr;gap:2rem}
+.coords{
+  font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--steel);
+  letter-spacing:.2em;margin-bottom:.6rem;
+}
+
+/* ---------- capítulo marte / spacex ---------- */
+.ch-space{background:linear-gradient(180deg,var(--void) 0%,#0a0810 50%,var(--void) 100%)}
+.mars{
+  position:absolute;right:-12vw;top:50%;
+  width:min(58vw,640px);height:min(58vw,640px);border-radius:50%;
+  background:
+    radial-gradient(circle at 32% 30%, #e8845f 0%, #c1543a 32%, #7a2f1e 62%, #3a140c 88%);
+  box-shadow:
+    inset -60px -40px 120px rgba(0,0,0,.75),
+    0 0 140px rgba(193,84,58,.22);
+  z-index:1;
+  will-change:transform;
+}
+.mars::after{ /* crateras sugeridas */
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:
+    radial-gradient(circle at 60% 55%, rgba(0,0,0,.22) 0 4%, transparent 5%),
+    radial-gradient(circle at 44% 70%, rgba(0,0,0,.18) 0 2.5%, transparent 3.5%),
+    radial-gradient(circle at 70% 34%, rgba(0,0,0,.15) 0 3%, transparent 4%),
+    radial-gradient(circle at 25% 48%, rgba(255,255,255,.05) 0 6%, transparent 7%);
+}
+.trajectory{
+  position:absolute;inset:0;z-index:2;pointer-events:none;overflow:visible;
+}
+.trajectory path{
+  fill:none;stroke:var(--burn);stroke-width:1.5;stroke-dasharray:6 8;opacity:.55;
+}
+.traj-ship{fill:var(--ink)}
+
+/* estatísticas */
+.stats{display:flex;gap:clamp(2rem,6vw,5rem);margin-top:3.5rem;flex-wrap:wrap}
+.stat .num{
+  font-family:'Bodoni Moda',serif;font-weight:700;
+  font-size:clamp(2.2rem,4.5vw,3.6rem);color:var(--ink);
+}
+.stat .lbl{font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);margin-top:.4rem}
+
+/* ---------- capítulo estrada / tesla ---------- */
+.ch-road{overflow:hidden}
+.road-scene{
+  position:absolute;inset:0;z-index:1;opacity:.9;
+}
+.horizon{
+  position:absolute;left:0;right:0;top:58%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(233,229,220,.25),transparent);
+}
+.road-lines{position:absolute;left:50%;top:58%;bottom:0;width:2px;transform:translateX(-50%);
+  background:repeating-linear-gradient(180deg,var(--burn) 0 26px,transparent 26px 64px);
+  opacity:.35;
+  mask-image:linear-gradient(180deg,transparent,black 30%);
+  -webkit-mask-image:linear-gradient(180deg,transparent,black 30%);
+  animation:roadmove 1.2s linear infinite;
+}
+@keyframes roadmove{from{background-position-y:0}to{background-position-y:90px}}
+.sun{
+  position:absolute;left:50%;top:58%;transform:translate(-50%,-92%);
+  width:min(34vw,300px);height:min(17vw,150px);border-radius:300px 300px 0 0;
+  background:linear-gradient(180deg,var(--burn),transparent 90%);
+  opacity:.28;filter:blur(2px);
+}
+
+/* ---------- ventures em cenas ---------- */
+.scenes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:3rem}
+.scene{background:var(--void);padding:2.2rem 1.8rem;transition:background 1s cubic-bezier(.16,1,.3,1)}
+.scene:hover{background:var(--deep)}
+.scene .yr{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--burn);letter-spacing:.3em}
+.scene h3{font-family:'Bodoni Moda',serif;font-weight:700;font-size:1.6rem;margin:.8rem 0 .7rem}
+.scene p{font-size:.85rem;color:var(--dim)}
+
+/* ---------- timeline ---------- */
+.timeline{border-left:1px solid var(--line);margin-top:3rem;max-width:40rem}
+.t-item{padding:0 0 2.4rem 2.2rem;position:relative}
+.t-item::before{
+  content:'';position:absolute;left:-4px;top:.5em;width:7px;height:7px;border-radius:50%;
+  background:var(--void);border:1px solid var(--burn);
+  transition:background .8s cubic-bezier(.16,1,.3,1);
+}
+.t-item.in::before{background:var(--burn)}
+.t-item .yr{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--burn);letter-spacing:.25em}
+.t-item p{color:var(--dim);font-size:.92rem;margin-top:.3rem;max-width:32rem}
+
+/* ---------- créditos ---------- */
+.credits{
+  min-height:90svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:6rem 2rem;position:relative;z-index:2;
+}
+.credits .display{font-size:clamp(2.4rem,7vw,5.5rem);margin:1.4rem 0}
+.credits p{color:var(--dim);max-width:30rem;font-size:.9rem}
+.credits .fin{
+  margin-top:4rem;font-family:'Bodoni Moda',serif;font-style:italic;font-weight:400;
+  font-size:1.1rem;color:var(--steel);
+}
+
+footer{
+  position:relative;z-index:2;border-top:1px solid var(--line);
+  padding:1.6rem clamp(1.5rem,7vw,8rem);
+  display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--steel);
+}
+
+/* acessibilidade / mobile */
+@media (max-width:720px){
+  .mars{right:-40vw;opacity:.55}
+  .stats{gap:1.6rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal,.reveal-mask{opacity:1!important;clip-path:none!important;transform:none!important}
+}
+:focus-visible{outline:2px solid var(--burn);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<!-- ATO 0 — ABERTURA -->
+<header class="hero">
+  <span class="eyebrow">Perfil documental · 1971 — presente</span>
+  <h1 class="display">MUSK</h1>
+  <p class="sub">Da África do Sul à órbita terrestre: um retrato em cinco atos do
+  empreendedor por trás da SpaceX, Tesla, Neuralink e X.</p>
+  <div class="scroll-cue" aria-hidden="true">
+    <span class="mono" style="font-size:.6rem;letter-spacing:.3em;color:var(--dim)">ROLE</span>
+    <div class="line"></div>
+  </div>
+</header>
+
+<main>
+
+<!-- ATO I — PRÓLOGO -->
+<section class="chapter prologue">
+  <div class="inner">
+    <div class="coords reveal">25.7479° S, 28.2293° E — PRETÓRIA</div>
+    <span class="eyebrow reveal d1">Ato I · Origem</span>
+    <h2 class="display reveal-mask d1">O ponto de partida</h2>
+    <p class="lead reveal d2">Elon Musk nasceu em Pretória, África do Sul, em 1971.
+    Aos 12 anos vendeu seu primeiro software — um jogo. Aos 17, deixou o país;
+    aos 24, abandonou o doutorado em Stanford dois dias depois de começar.</p>
+    <p class="body-t reveal d3">A primeira empresa, Zip2, foi vendida por US$ 307 milhões em 1999.
+    A segunda, X.com, fundiu-se com a concorrente e virou o PayPal — comprado pelo eBay
+    por US$ 1,5 bilhão em 2002. Com o capital, ele fez a aposta que quase ninguém entendeu na época:
+    foguetes.</p>
+  </div>
+</section>
+
+<!-- ATO II — SPACEX -->
+<section class="chapter ch-space" id="space">
+  <div class="mars" id="marsEl" aria-hidden="true"></div>
+  <svg class="trajectory" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+    <path id="trajPath" d="M -20 560 C 250 520, 420 380, 620 260 S 900 120, 1030 60"/>
+    <circle class="traj-ship" id="trajShip" r="4" cx="-20" cy="560"/>
+  </svg>
+  <div class="inner">
+    <span class="eyebrow reveal">Ato II · 2002</span>
+    <h2 class="display reveal-mask d1">SpaceX</h2>
+    <p class="lead reveal d2">Fundada com a tese de que foguetes descartáveis eram o único
+    motivo de o espaço ser caro. Depois de três lançamentos fracassados que quase levaram
+    a empresa à falência, o quarto voo do Falcon 1 chegou à órbita em 2008.</p>
+    <p class="body-t reveal d3">Em 2015, um propulsor do Falcon 9 pousou de volta em terra —
+    a primeira aterrissagem orbital de um foguete reutilizável. Hoje a empresa opera a
+    constelação Starlink e desenvolve a Starship, projetada para levar humanos a Marte.</p>
+    <div class="stats reveal d3">
+      <div class="stat"><div class="num" data-count="2008">0</div><div class="lbl">Primeira órbita</div></div>
+      <div class="stat"><div class="num" data-count="2015">0</div><div class="lbl">Primeiro pouso</div></div>
+      <div class="stat"><div class="num" data-count="2020">0</div><div class="lbl">Primeiro voo tripulado</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ATO III — TESLA -->
+<section class="chapter ch-road" id="road">
+  <div class="road-scene" aria-hidden="true">
+    <div class="sun"></div>
+    <div class="horizon"></div>
+    <div class="road-lines"></div>
+  </div>
+  <div class="inner">
+    <span class="eyebrow reveal">Ato III · 2004</span>
+    <h2 class="display reveal-mask d1">Tesla</h2>
+    <p class="lead reveal d2">Musk entrou como principal investidor quando a Tesla era uma
+    startup de garagem, e assumiu o comando em 2008, no auge da crise financeira —
+    a semanas da insolvência.</p>
+    <p class="body-t reveal d3">A estratégia era um roteiro em três atos: um esportivo caro
+    (Roadster), depois um sedã de luxo (Model S), e então o carro de massa (Model 3).
+    Em 2020, a Tesla tornou-se a montadora mais valiosa do mundo, forçando toda a
+    indústria a acelerar a transição elétrica.</p>
+  </div>
+</section>
+
+<!-- ATO IV — AS OUTRAS FRENTES -->
+<section class="chapter">
+  <div class="inner">
+    <span class="eyebrow reveal">Ato IV · Frentes paralelas</span>
+    <h2 class="display reveal-mask d1">Cenas simultâneas</h2>
+    <div class="scenes reveal d2">
+      <div class="scene">
+        <span class="yr">2015</span>
+        <h3>OpenAI</h3>
+        <p>Cofundou o laboratório de pesquisa em IA; deixou o conselho em 2018 e mais tarde fundou a concorrente xAI.</p>
+      </div>
+      <div class="scene">
+        <span class="yr">2016</span>
+        <h3>Neuralink</h3>
+        <p>Interfaces cérebro-computador. Em 2024, o primeiro implante em um paciente humano.</p>
+      </div>
+      <div class="scene">
+        <span class="yr">2016</span>
+        <h3>The Boring Company</h3>
+        <p>Túneis urbanos de baixo custo, nascida de uma reclamação sobre o trânsito de Los Angeles.</p>
+      </div>
+      <div class="scene">
+        <span class="yr">2022</span>
+        <h3>X</h3>
+        <p>Comprou o Twitter por US$ 44 bilhões e o rebatizou de X, retomando o nome de sua segunda empresa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ATO V — LINHA DO TEMPO -->
+<section class="chapter">
+  <div class="inner">
+    <span class="eyebrow reveal">Ato V · Cronologia</span>
+    <h2 class="display reveal-mask d1">Registro de bordo</h2>
+    <div class="timeline">
+      <div class="t-item"><span class="yr">1971</span><p>Nasce em Pretória, África do Sul.</p></div>
+      <div class="t-item"><span class="yr">1999</span><p>Vende a Zip2; funda a X.com, que se tornaria o PayPal.</p></div>
+      <div class="t-item"><span class="yr">2002</span><p>Funda a SpaceX com o dinheiro da venda do PayPal.</p></div>
+      <div class="t-item"><span class="yr">2008</span><p>Falcon 1 chega à órbita; assume o comando da Tesla.</p></div>
+      <div class="t-item"><span class="yr">2015</span><p>Primeiro pouso de um propulsor orbital do Falcon 9.</p></div>
+      <div class="t-item"><span class="yr">2020</span><p>SpaceX leva astronautas da NASA à ISS — o primeiro voo orbital tripulado de uma empresa privada.</p></div>
+      <div class="t-item"><span class="yr">2022</span><p>Adquire o Twitter, depois renomeado X.</p></div>
+      <div class="t-item"><span class="yr">2024</span><p>Neuralink realiza o primeiro implante em humano; Starship completa voos de teste com retorno controlado.</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- CRÉDITOS -->
+<section class="credits">
+  <span class="eyebrow reveal">Créditos finais</span>
+  <h2 class="display reveal-mask d1">Um retrato,<br>não um veredito.</h2>
+  <p class="reveal d2">Admirado e contestado na mesma medida, Musk segue sendo uma das figuras
+  mais influentes — e polarizadoras — da tecnologia contemporânea. Este perfil registra a
+  trajetória; o julgamento fica com quem assiste.</p>
+  <div class="fin reveal d3">fin.</div>
+</section>
+
+<footer>
+  <span>Perfil documental — projeto de portfólio</span>
+  <span>Fatos públicos · sem afiliação</span>
+</footer>
+
+<script>
+/* ---------- starfield com parallax ---------- */
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let W, H, stars = [], mx = 0, my = 0;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function resize(){
+  W = canvas.width = innerWidth * devicePixelRatio;
+  H = canvas.height = innerHeight * devicePixelRatio;
+  canvas.style.width = innerWidth + 'px';
+  canvas.style.height = innerHeight + 'px';
+  stars = Array.from({length: Math.min(320, innerWidth)}, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    z: Math.random() * .8 + .2,        // profundidade -> parallax
+    r: Math.random() * 1.4 + .3,
+    tw: Math.random() * Math.PI * 2     // fase de cintilação
+  }));
+}
+resize();
+addEventListener('resize', resize);
+addEventListener('mousemove', e => {
+  mx = (e.clientX / innerWidth - .5);
+  my = (e.clientY / innerHeight - .5);
+});
+
+let t = 0;
+function draw(){
+  ctx.clearRect(0, 0, W, H);
+  t += .016;
+  const scroll = scrollY * devicePixelRatio;
+  for (const s of stars){
+    const px = s.x + mx * 40 * s.z * devicePixelRatio;
+    const py = ((s.y - scroll * s.z * .3) % H + H) % H + my * 40 * s.z * devicePixelRatio;
+    const alpha = .35 + .45 * Math.abs(Math.sin(t * .8 + s.tw)) * s.z;
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = s.z > .75 ? '#e9e5dc' : '#9aa4bd';
+    ctx.beginPath();
+    ctx.arc(px, py, s.r * s.z * devicePixelRatio, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  if (!reduced) requestAnimationFrame(draw);
+}
+draw(); // com reduced-motion desenha 1 frame estático
+
+/* ---------- reveals ---------- */
+const io = new IntersectionObserver(entries => {
+  for (const e of entries){
+    if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  }
+}, { threshold: .25 });
+document.querySelectorAll('.reveal, .reveal-mask, .t-item').forEach(el => io.observe(el));
+
+/* ---------- contadores ---------- */
+const ioNum = new IntersectionObserver(entries => {
+  for (const e of entries){
+    if (!e.isIntersecting) continue;
+    ioNum.unobserve(e.target);
+    const end = +e.target.dataset.count;
+    if (reduced){ e.target.textContent = end; continue; }
+    const start = end - 60, dur = 1600, t0 = performance.now();
+    (function tick(now){
+      const p = Math.min((now - t0) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 4);          // easeOutQuart
+      e.target.textContent = Math.round(start + (end - start) * ease);
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+}, { threshold: .6 });
+document.querySelectorAll('[data-count]').forEach(el => ioNum.observe(el));
+
+/* ---------- parallax de Marte + trajetória ---------- */
+const marsEl = document.getElementById('marsEl');
+const spaceSec = document.getElementById('space');
+const ship = document.getElementById('trajShip');
+const path = document.getElementById('trajPath');
+const pathLen = path.getTotalLength();
+
+function onScroll(){
+  if (reduced) return;
+  const r = spaceSec.getBoundingClientRect();
+  // progresso 0→1 enquanto a seção cruza a viewport
+  const p = Math.min(Math.max((innerHeight - r.top) / (innerHeight + r.height), 0), 1);
+  marsEl.style.transform = `translateY(${(-50 + (p - .5) * -22)}%) rotate(${p * 8}deg)`;
+  const pt = path.getPointAtLength(p * pathLen);
+  ship.setAttribute('cx', pt.x);
+  ship.setAttribute('cy', pt.y);
+}
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+</script>
+</body>
+</html>
