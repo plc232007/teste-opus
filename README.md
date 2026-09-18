@@ -1,6 +1,6 @@
-# Dois sites one-page
+# Experimentos de direção de arte
 
-Dois exercícios de direção de arte em HTML, CSS e JavaScript puros — sem
+Três exercícios de direção de arte em HTML, CSS e JavaScript puros — sem
 framework, sem biblioteca de animação, sem etapa de build. A única
 dependência externa são as fontes do Google Fonts.
 
@@ -9,7 +9,9 @@ dependência externa são as fontes do Google Fonts.
 | 01 | **Adrian Vale** | [`vale/`](vale/) | Portfólio de um fundador fictício. Seis atos, visual inteiramente em código. |
 | 02 | **MUSK** | [`musk/`](musk/) | Perfil documental em cinco atos, terceira pessoa, apenas fatos públicos. |
 
-A raiz (`index.html`) é o índice que leva aos dois.
+| 03 | **Elon Musk - Astra 6** | [`astra-6/`](astra-6/) | Experiência editorial com planetas procedurais em WebGL e laboratório interativo. |
+
+A raiz (`index.html`) é o índice que leva aos três.
 
 ## Estrutura
 
@@ -18,6 +20,7 @@ A raiz (`index.html`) é o índice que leva aos dois.
 ├── index.html          índice
 ├── vale/index.html     projeto 01
 ├── musk/index.html     projeto 02
+├── astra-6/           projeto 03 (HTML, CSS e JavaScript + WebGL)
 ├── musk/img/           fotografias do projeto 02
 └── .nojekyll           impede o Jekyll de processar o site
 ```
