@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08080b">
+<meta name="color-scheme" content="dark">
+<title>Lodestar L-1 — Fully reusable heavy-lift</title>
+<meta name="description" content="Lodestar L-1: a fictional fully reusable heavy-lift launch vehicle. Procedural 3D in plain WebGL — hull, grid fins, engines and fairing generated in code.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308080b'/%3E%3Cpath d='M16 4 L21 14 L21 26 L11 26 L11 14 Z' fill='%23e4a045'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- The webfont sheet is the one render-blocking request worth dodging:
+     display=swap means the page paints in the fallback stack either way. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;0,6..96,900;1,6..96,700&amp;family=Archivo:wght@300;400;500;700&amp;family=IBM+Plex+Mono:wght@300;400&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;0,6..96,900;1,6..96,700&amp;family=Archivo:wght@300;400;500;700&amp;family=IBM+Plex+Mono:wght@300;400&amp;display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;0,6..96,900;1,6..96,700&amp;family=Archivo:wght@300;400;500;700&amp;family=IBM+Plex+Mono:wght@300;400&amp;display=swap"></noscript>
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+
+<a class="skip" href="#overview">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="#top">
+    <span class="brand-mark" aria-hidden="true">◆</span>
+    <span>LODESTAR<small>LAUNCH SYSTEMS</small></span>
+  </a>
+  <nav aria-label="Sections">
+    <a href="#overview">Vehicle</a>
+    <a href="#stack">Stack</a>
+    <a href="#viewer">Viewer</a>
+    <a href="#specs">Specification</a>
+    <a href="#mission">Mission</a>
+  </nav>
+  <a class="back" href="../index.html">All experiments <span aria-hidden="true">↗</span></a>
+</header>
+
+<main>
+
+<!-- ─────────────────────────────  HERO  ───────────────────────────── -->
+<section class="hero" id="top">
+  <div class="hero-stage">
+    <canvas id="hero-canvas" role="img"
+      aria-label="The Lodestar L-1 standing on Pad A at dawn: a 74-metre two-stage rocket with a sooted first stage, four grid fins near the top, nine engine bells over the launch mount, and the service tower to its left."></canvas>
+    <div class="fallback" role="img" aria-label="Technical elevation of the Lodestar L-1: first stage, interstage, second stage, fairing and payload stacked bottom to top.">
+      <svg viewBox="0 0 120 420" aria-hidden="true">
+        <g fill="none" stroke="#e4a045" stroke-width="1" opacity=".8">
+          <path d="M60 14 L78 72 L78 300 L72 356 L48 356 L42 300 L42 72 Z"/>
+          <path d="M42 120 H78 M42 170 H78 M42 250 H78"/>
+          <path d="M42 290 L30 300 L30 346 M78 290 L90 300 L90 346"/>
+        </g>
+        <g fill="none" stroke="rgba(236,232,225,.38)" stroke-width=".8">
+          <path d="M48 356 L48 372 M60 356 L60 376 M72 356 L72 372"/>
+          <path d="M26 388 H94"/>
+          <path d="M42 96 L22 104 L22 126 L42 132 M78 96 L98 104 L98 126 L78 132"/>
+        </g>
+      </svg>
+      <p>WebGL is unavailable, so the vehicle is drawn as a technical elevation.</p>
+    </div>
+    <div class="hero-vignette" aria-hidden="true"></div>
+  </div>
+
+  <div class="hero-copy">
+    <p class="tele eyebrow"><span>Lodestar Launch Systems · Mojave, California</span></p>
+    <h1>L<em>-</em>1</h1>
+    <p class="lede">
+      Heavy-lift, and nothing is thrown away. Both stages come home,
+      the fairing flies itself to the ship, and the same airframe goes
+      back to the pad in nine days.
+    </p>
+    <div class="hero-stats">
+      <div><b>74.0 m</b><span class="tele">Height</span></div>
+      <div><b>28.5 t</b><span class="tele">To low earth orbit</span></div>
+      <div><b>96.4%</b><span class="tele">Full-stack reuse</span></div>
+      <div><b>$740</b><span class="tele">Per kilogram</span></div>
+    </div>
+  </div>
+
+  <div class="hero-foot tele">
+    <span>Pad A · 35°03′ N 118°09′ W</span>
+    <a href="#overview">↓ &nbsp;Scroll to open the stack</a>
+    <span>Vehicle 019</span>
+  </div>
+</section>
+
+<!-- ───────────────────────────  OVERVIEW  ─────────────────────────── -->
+<section class="overview section" id="overview">
+  <div class="section-top tele">
+    <span>01 / The vehicle</span>
+    <span>Two stages. Zero expended.</span>
+  </div>
+  <div class="overview-grid">
+    <h2 class="reveal">A rocket you <em>fly</em>,<br>not a rocket<br>you build.</h2>
+    <div class="overview-copy reveal">
+      <p>
+        The L-1 was drawn around one constraint: every piece that leaves
+        the pad has to come back to it. That rules out the cheap answers —
+        the expendable upper stage, the fairing written off at sea — and
+        forces the expensive ones to get good.
+      </p>
+      <p>
+        Nine Meridian engines lift 682 tonnes off the mount. The booster
+        turns around before it leaves the atmosphere and lands on the pad
+        it departed. The second stage carries its own heat shield and
+        enough margin to fly itself down an hour later.
+      </p>
+      <dl class="overview-facts">
+        <div><dt class="tele">First flight</dt><dd>2014</dd></div>
+        <div><dt class="tele">Flights to date</dt><dd>247</dd></div>
+        <div><dt class="tele">Best turnaround</dt><dd>9 days</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────  EXPLODED VIEW  ──────────────────────── -->
+<section class="explode" id="stack">
+  <div class="explode-track">
+    <div class="explode-sticky">
+      <div class="section-top tele">
+        <span>02 / Exploded view</span>
+        <span class="readout">SEPARATION <b id="readout-step">01 / 05</b> · <b id="readout-value">0%</b></span>
+      </div>
+
+      <div class="explode-layout">
+        <div class="explode-stage">
+          <canvas id="explode-canvas" role="img"
+            aria-label="The L-1 stack separating: first stage, interstage, second stage, the two fairing halves and the payload drift apart along the flight axis as the page scrolls."></canvas>
+          <div class="fallback" role="img" aria-label="Exploded diagram of the five assemblies of the L-1, separated along the vertical axis.">
+            <svg viewBox="0 0 120 460" aria-hidden="true">
+              <g fill="none" stroke="#e4a045" stroke-width="1" opacity=".85">
+                <path d="M60 10 L74 46 L74 70 L46 70 L46 46 Z"/>
+                <path d="M46 96 H74 V150 H46 Z"/>
+                <path d="M46 176 H74 V246 H46 Z"/>
+                <path d="M46 272 H74 V300 H46 Z"/>
+                <path d="M44 326 H76 V436 H44 Z"/>
+              </g>
+              <g fill="none" stroke="rgba(236,232,225,.3)" stroke-width=".7" stroke-dasharray="2 6">
+                <path d="M60 70 V96 M60 150 V176 M60 246 V272 M60 300 V326"/>
+              </g>
+            </svg>
+            <p>WebGL is unavailable. The five assemblies are listed beside this diagram.</p>
+          </div>
+        </div>
+
+        <div class="explode-side">
+          <ol class="stage-list">
+            <li class="stage-item is-active" aria-current="step">
+              <span class="tele num">01</span>
+              <h3>First stage</h3>
+              <p>44 m of tank and thrust structure, nine Meridian engines, four grid fins and four legs. Lands on the pad it left.</p>
+              <span class="tele spec">Dry 28.4 t · 9 × Meridian · RTLS</span>
+            </li>
+            <li class="stage-item" aria-current="false">
+              <span class="tele num">02</span>
+              <h3>Interstage</h3>
+              <p>Carbon barrel carrying the separation collar and the pushers. Stays with the booster through re-entry.</p>
+              <span class="tele spec">4.0 m · Carbon · Pneumatic pushers</span>
+            </li>
+            <li class="stage-item" aria-current="false">
+              <span class="tele num">03</span>
+              <h3>Second stage</h3>
+              <p>A single vacuum Meridian under a stretched methalox tank, with the windward face shielded for its own return.</p>
+              <span class="tele spec">Dry 4.9 t · 1 × Meridian-V · 1.14 MN</span>
+            </li>
+            <li class="stage-item" aria-current="false">
+              <span class="tele num">04</span>
+              <h3>Fairing</h3>
+              <p>Two halves, split at 3 min 38 s. Each flies a steerable parafoil down to the recovery ship and is reused whole.</p>
+              <span class="tele spec">5.2 × 13.0 m · Parafoil recovery</span>
+            </li>
+            <li class="stage-item" aria-current="false">
+              <span class="tele num">05</span>
+              <h3>Payload</h3>
+              <p>28.5 tonnes to low earth orbit on a reusable flight. Here, a hexagonal bus with its arrays folded for ascent.</p>
+              <span class="tele spec">28.5 t LEO · 9.4 t GTO</span>
+            </li>
+          </ol>
+
+          <div class="stepper" role="group" aria-label="Separation steps">
+            <p class="tele">Reduced motion · choose a frame</p>
+            <div class="stepper-buttons">
+              <button type="button" data-step="0" aria-pressed="true">Stacked</button>
+              <button type="button" data-step="1" aria-pressed="false">Stage sep</button>
+              <button type="button" data-step="2" aria-pressed="false">Upper stage</button>
+              <button type="button" data-step="3" aria-pressed="false">Fairing</button>
+              <button type="button" data-step="4" aria-pressed="false">Payload</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────  VIEWER  ──────────────────────────── -->
+<section class="viewer section" id="viewer">
+  <div class="section-top tele">
+    <span>03 / Interactive viewer</span>
+    <span>Drag, touch or use the arrow keys</span>
+  </div>
+
+  <div class="viewer-heading reveal">
+    <h2>Turn it <em>over.</em></h2>
+    <p>The same geometry as the renders above, rebuilt in your browser and lit in real time.</p>
+  </div>
+
+  <div class="viewer-shell">
+    <div class="viewer-stage">
+      <canvas id="viewer-canvas" tabindex="0" role="img" aria-describedby="viewer-help"
+        aria-label="Interactive 3D model of the Lodestar L-1. Drag with the pointer, or use the left and right arrow keys to orbit, up and down to change elevation, and R to reset the view."></canvas>
+      <div class="fallback" role="img" aria-label="Technical elevation of the Lodestar L-1 shown in place of the interactive model.">
+        <svg viewBox="0 0 120 420" aria-hidden="true">
+          <g fill="none" stroke="#e4a045" stroke-width="1" opacity=".8">
+            <path d="M60 14 L78 72 L78 300 L72 356 L48 356 L42 300 L42 72 Z"/>
+            <path d="M42 120 H78 M42 170 H78 M42 250 H78"/>
+            <path d="M42 290 L30 300 L30 346 M78 290 L90 300 L90 346"/>
+          </g>
+          <g fill="none" stroke="rgba(236,232,225,.38)" stroke-width=".8">
+            <path d="M42 96 L22 104 L22 126 L42 132 M78 96 L98 104 L98 126 L78 132"/>
+            <path d="M26 388 H94"/>
+          </g>
+        </svg>
+        <p>WebGL is unavailable in this browser, so the interactive model is replaced by a static elevation.</p>
+      </div>
+      <span class="viewer-angle tele" aria-hidden="true">AZ <b id="viewer-angle">000°</b></span>
+      <span class="viewer-hint tele" aria-hidden="true">↔ drag to orbit</span>
+    </div>
+
+    <div class="viewer-controls">
+      <p class="tele">Controls</p>
+      <button type="button" id="viewer-spin" class="control" aria-pressed="false">Auto rotation <span aria-hidden="true">▷</span></button>
+      <button type="button" id="viewer-reset" class="control">Reset view <span aria-hidden="true">↺</span></button>
+      <p class="help" id="viewer-help">
+        Focus the model and use <kbd>←</kbd> <kbd>→</kbd> to orbit, <kbd>↑</kbd> <kbd>↓</kbd> for elevation,
+        <kbd>+</kbd> <kbd>−</kbd> to close in, and <kbd>R</kbd> to reset. Hold <kbd>Shift</kbd> for coarse steps.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────  SPECS  ───────────────────────────── -->
+<section class="specs section" id="specs">
+  <div class="section-top tele">
+    <span>04 / Specification</span>
+    <span>Block 3 · as flown</span>
+  </div>
+
+  <div class="specs-grid">
+    <div class="spec-group reveal">
+      <h3 class="tele">Airframe</h3>
+      <dl>
+        <div><dt>Height</dt><dd>74.0 m</dd></div>
+        <div><dt>Diameter</dt><dd>5.4 m</dd></div>
+        <div><dt>Mass at liftoff</dt><dd>682 t</dd></div>
+        <div><dt>Stages</dt><dd>2, both recovered</dd></div>
+        <div><dt>Structure</dt><dd>Al-Li barrels, carbon interstage</dd></div>
+      </dl>
+    </div>
+
+    <div class="spec-group reveal">
+      <h3 class="tele">Propulsion</h3>
+      <dl>
+        <div><dt>First stage</dt><dd>9 × Meridian</dd></div>
+        <div><dt>Thrust, sea level</dt><dd>8.42 MN</dd></div>
+        <div><dt>Second stage</dt><dd>1 × Meridian-V</dd></div>
+        <div><dt>Thrust, vacuum</dt><dd>1.14 MN</dd></div>
+        <div><dt>Propellant</dt><dd>Subcooled LOX / methane</dd></div>
+      </dl>
+    </div>
+
+    <div class="spec-group reveal">
+      <h3 class="tele">Capacity</h3>
+      <dl>
+        <div><dt>LEO, reusable</dt><dd>28.5 t</dd></div>
+        <div><dt>LEO, expended</dt><dd>41.0 t</dd></div>
+        <div><dt>GTO</dt><dd>9.4 t</dd></div>
+        <div><dt>Fairing volume</dt><dd>5.2 × 13.0 m</dd></div>
+        <div><dt>Cost per kilogram</dt><dd>$740</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────  MISSION PROFILE  ─────────────────────── -->
+<section class="mission section" id="mission">
+  <div class="section-top tele">
+    <span>05 / Mission profile</span>
+    <span>Reference flight · 28.5 t to 420 km</span>
+  </div>
+
+  <div class="mission-layout">
+    <div class="mission-chart reveal">
+      <svg viewBox="0 0 520 300" role="img" aria-labelledby="chart-title chart-desc">
+        <title id="chart-title">Reference flight profile of the Lodestar L-1</title>
+        <desc id="chart-desc">The vehicle climbs from the pad, the booster separates at two minutes thirty-eight and loops back to land at the pad, the fairing halves descend under parafoils to a ship, and the second stage continues to orbit before returning an hour later.</desc>
+        <g stroke="rgba(236,232,225,.14)" stroke-width="1">
+          <path d="M28 262 H498"/>
+          <path d="M28 262 V40" />
+        </g>
+        <g stroke="rgba(236,232,225,.08)" stroke-width="1" stroke-dasharray="2 8">
+          <path d="M28 200 H498 M28 140 H498 M28 80 H498"/>
+        </g>
+        <path d="M60 262 C 110 262, 150 190, 214 128" fill="none" stroke="#e4a045" stroke-width="2"/>
+        <path d="M214 128 C 270 86, 350 64, 486 56" fill="none" stroke="#e4a045" stroke-width="2" opacity=".55"/>
+        <path d="M214 128 C 198 176, 140 208, 72 254" fill="none" stroke="rgba(236,232,225,.5)" stroke-width="1.4" stroke-dasharray="5 5"/>
+        <path d="M232 140 C 250 186, 300 220, 360 254" fill="none" stroke="rgba(236,232,225,.3)" stroke-width="1.2" stroke-dasharray="3 7"/>
+        <g fill="#e4a045">
+          <circle cx="60" cy="262" r="3.5"/>
+          <circle cx="214" cy="128" r="4.5"/>
+          <circle cx="72" cy="254" r="3.5"/>
+        </g>
+        <g fill="rgba(236,232,225,.62)" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.4">
+          <text x="46" y="282">LIFTOFF</text>
+          <text x="186" y="112">SEPARATION</text>
+          <text x="330" y="246">FAIRING → SHIP</text>
+          <text x="404" y="46">ORBIT</text>
+          <text x="92" y="238">BOOSTER → PAD A</text>
+        </g>
+      </svg>
+    </div>
+
+    <ol class="mission-list">
+      <li class="reveal"><span class="tele t">T−00:00:35</span><div><h3>Startup</h3><p>Nine engines spin up against the hold-down clamps while the flight computer reads the thrust curve.</p></div></li>
+      <li class="reveal"><span class="tele t">T+00:00:00</span><div><h3>Liftoff</h3><p>Clamps release at full thrust. The vehicle clears the tower in seven seconds.</p></div></li>
+      <li class="reveal"><span class="tele t">T+00:01:14</span><div><h3>Max Q</h3><p>Peak aerodynamic pressure. The centre engine throttles to 68%.</p></div></li>
+      <li class="reveal"><span class="tele t">T+00:02:38</span><div><h3>MECO</h3><p>Main engine cutoff. The booster has spent 71% of its propellant and kept the rest for the way home.</p></div></li>
+      <li class="reveal"><span class="tele t">T+00:02:43</span><div><h3>Stage separation</h3><p>Pneumatic pushers part the stages; the second stage ignites four seconds later.</p></div></li>
+      <li class="reveal"><span class="tele t">T+00:03:06</span><div><h3>Boostback burn</h3><p>Three engines reverse the booster's downrange velocity and aim it at Pad A.</p></div></li>
+      <li class="reveal"><span class="tele t">T+00:03:38</span><div><h3>Fairing separation</h3><p>Both halves split away and open parafoils for a guided descent to the recovery ship.</p></div></li>
+      <li class="reveal"><span class="tele t">T+00:06:24</span><div><h3>Entry burn</h3><p>A three-engine burn takes the heating load off the grid fins and the engine bay.</p></div></li>
+      <li class="reveal"><span class="tele t">T+00:08:02</span><div><h3>Booster landing</h3><p>Legs deploy at 400 m. The booster lands on Pad A, 240 m from where it lifted off.</p></div></li>
+      <li class="reveal"><span class="tele t">T+00:09:41</span><div><h3>SECO</h3><p>Second stage cutoff at 420 km, inclination 51.6°.</p></div></li>
+      <li class="reveal"><span class="tele t">T+00:14:00</span><div><h3>Payload deploy</h3><p>The bus separates and unfolds its arrays on the second orbital night.</p></div></li>
+      <li class="reveal"><span class="tele t">T+01:02:00</span><div><h3>Second stage return</h3><p>Deorbit burn, shielded re-entry and a propulsive landing at Pad C. Nothing is left in orbit.</p></div></li>
+    </ol>
+  </div>
+
+  <div class="recovery">
+    <article class="reveal"><h3>Booster</h3><p class="tele">RETURN TO LAUNCH SITE</p><p>Boostback, entry burn, four legs, Pad A. Inspected and re-flown in nine days at best.</p></article>
+    <article class="reveal"><h3>Fairing</h3><p class="tele">PARAFOIL · SHIP RECOVERY</p><p>Each half steers itself to a net ship 640 km downrange and flies again whole.</p></article>
+    <article class="reveal"><h3>Second stage</h3><p class="tele">DEORBIT · PROPULSIVE LANDING</p><p>Windward shielding and a reserved landing burn bring the upper stage back to Pad C.</p></article>
+  </div>
+</section>
+
+<!-- ───────────────────────────  CLOSING  ──────────────────────────── -->
+<section class="closing section">
+  <div class="section-top tele"><span>06 / End of file</span><span>Lodestar L-1</span></div>
+  <div class="closing-inner reveal">
+    <h2>Fly it. Land it.<br><em>Fly it again.</em></h2>
+    <a class="button" href="#top">Back to the pad <span aria-hidden="true">↑</span></a>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-note">
+    <p>
+      Lodestar L-1 is a <strong>fictional vehicle</strong>. The company, the engines,
+      the flight history and every number on this page are invented for an art-direction
+      experiment, and belong to the same universe as the Adrian Vale portfolio.
+      Nothing here describes a real launch system.
+    </p>
+  </div>
+  <div class="colophon tele">
+    <span>© 2031 Lodestar Launch Systems</span>
+    <span>A fictional vehicle</span>
+    <span>Geometry, skin and lighting generated in code — no model files</span>
+    <span>Set in Bodoni Moda &amp; Archivo</span>
+    <a href="../index.html">All experiments ↗</a>
+  </div>
+</footer>
+
+</body>
+</html>
